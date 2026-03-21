@@ -16,9 +16,8 @@ class Settings(BaseSettings):
     # Redis
     REDIS_URL: str = "redis://localhost:6379"
 
-    # Gemini
-    GEMINI_API_KEY: str = ""
-    GEMINI_MODEL: str = "gemini-2.5-flash"
+    # Groq (Gemini yerine)
+    GROQ_API_KEY: str = ""
 
     # iyzico
     IYZICO_API_KEY: str = ""

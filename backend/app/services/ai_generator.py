@@ -1,243 +1,184 @@
 """
-AI Başvuru Metni Üretici — Bölüm 5'teki tüm prompt şablonları
-Gemini 2.5 Flash ile SSE streaming destekli
+AI Başvuru Metni Üretici — Groq Llama-3 Altyapısı (Faz 6)
+Kademeli üretim (Chunking) ve %90 Başarı (Self-Correction) filtreli
 """
-from app.services.gemini import generate_text
+import os
+import asyncio
+from typing import AsyncGenerator
+from groq import AsyncGroq
+from app.config import settings
 
+client = AsyncGroq(api_key=settings.GROQ_API_KEY)
 
-# ─── PROMPT ŞABLONLARI ────────────────────────────────────────────────────────
+# ─── SİSTEM PROMPTLARI (Mart 2026 KOSGEB Standartları) ─────────────────────────
 
-PROJECT_SUMMARY_PROMPT = """
-Sen deneyimli bir KOSGEB başvuru danışmanısın.
-Aşağıdaki bilgilere göre KOSGEB İş Geliştirme Desteği için proje özeti yaz.
-
-KRİTİK KURALLAR:
-- İlk cümle projeyi ve hedefini net söylesin
-- 2026 KOSGEB öncelikleriyle örtüşen noktaları öne çıkar (dijitalleşme, yeşil sanayi)
-- Ölçülebilir hedefler kullan ("büyük büyüme" değil, "12 ayda 500 müşteri")
-- Türkiye ekonomisine katkıyı vurgula: istihdam sayısı, gelir, ihracat potansiyeli
-- "İnovatif", "devrimci", "benzersiz" gibi boş kelimeler kullanma
-- "Tabii ki", "Kesinlikle", "Bu bağlamda", "Önemle belirtmek gerekir" gibi yapay zeka kalıplarından kaçın
-- Yalın, akıcı Türkçe — bürokratik ama anlaşılır
-- "Tabii ki", "Kesinlikle", "Bu bağlamda", "Sonuç itibarıyla", "Mükemmel bir fırsat" YASAK
-
-İŞLETME BİLGİLERİ:
-İşletme adı: {business_name}
-NACE kodu: {nace_code}
-Şehir: {city}
-İşletme yaşı: {business_age_months} aylık
-Özel kategori: {special_category}
-
-PROJE BİLGİLERİ:
-Proje başlığı: {project_title}
-Fikir ve amaç: {project_idea}
-Çözülen problem: {problem_solved}
-
-PAZAR BİLGİLERİ:
-Hedef kitle: {target_market}
-Rekabet farkı: {competitive_advantage}
-Pazar büyüklüğü: {market_size}
-
-FİNANSAL:
-Talep edilen destek: {requested_amount} TL
-Bütçe kalemleri: {budget_items}
-İlk yıl gelir hedefi: {revenue_target_year1} TL
-İstihdam hedefi: {employment_target} kişi
-
-400-600 kelime, paragraf halinde, başlıksız yaz.
-""".strip()
-
-
-BUSINESS_PLAN_PROMPT = """
-Sen deneyimli bir KOSGEB başvuru danışmanısın.
-Aynı bilgileri kullanarak resmi KOSGEB iş planı formatında yaz.
-
-KRİTİK KURALLAR:
-- Jüri anlayacak şekilde somut ve ölçülebilir bil
-- "Tabii ki", "Kesinlikle", "Bu bağlamda", "Sonuç itibarıyla" YASAK
-- "Tabii ki", "Mükemmel fırsat", "Büyük potansiyel" gibi boş ifadeler YASAK
-
-İŞLETME: {business_name} | {nace_code} | {city} | {business_age_months} aylık
-PROJE: {project_title}
-FİKİR: {project_idea}
-HEDEF KİTLE: {target_market}
-REKABETÇİ AVANTAJ: {competitive_advantage}
-BÜTÇE: {requested_amount} TL → {budget_items}
-İSTİHDAM: {employment_target} kişi | GELİR HEDEFİ: {revenue_target_year1} TL
-SÜRE: {project_duration_months} ay
-KİLOMETRE TAŞLARI: {milestones}
-
-Aşağıdaki başlıkları içer, her bölüm 100-200 kelime:
-
-## 1. Pazar Analizi
-## 2. Değer Önerisi  
-## 3. İş Modeli
-## 4. Pazarlama ve Satış Stratejisi
-## 5. Operasyonel Plan
-## 6. Riskler ve Önlemler
-(3 risk: her biri için risk adı, olasılık, azaltma stratejisi)
-""".strip()
-
-
-FINANCIAL_PROJECTION_PROMPT = """
-Sen deneyimli bir KOSGEB başvuru danışmanısın.
-Aşağıdaki finansal bilgilere dayanarak 3 yıllık finansal projeksiyonun
-neden gerçekçi olduğunu açıklayan metin yaz.
-
-Bütçe kalemleri: {budget_items}
-Toplam talep: {requested_amount} TL
-1. yıl gelir hedefi: {revenue_target_year1} TL
-İstihdam: {employment_target} kişi
-Sektör: {nace_code} - {nace_description}
+SYSTEM_PROMPT = """Sen üst düzey bir KOSGEB Proje Değerlendirme Uzmanı ve Danışmanısın.
+Mart 2026 itibarıyla KOSGEB'in beklentileri:
+- Gerçekçi, ölçülebilir ve somut hedefler (Afaki rakamlar reddediliyor).
+- Dijital dönüşüm, yeşil enerji ve yerli üretim projelerine tam destek.
+- Şişirilmiş bütçeler onay almıyor, her talep mantıklı bir "Neden?" ile açıklanmalı.
 
 KURALLAR:
-- Gerçekçi-iyimser ton
-- Tablo değil, metin formatında
-- "Tabii ki", "Kesinlikle" gibi yapay zeka kalıpları YASAK
-- Somut gerekçeler ver (pazar büyüklüğü, talep trendi, maliyet yapısı)
-- 200-300 kelime
-""".strip()
+- "Tabii ki", "Kesinlikle", "Anlaşıldı", "İşte metniniz" gibi yapay zeka kalıplarını ASLA KULLANMA. Doğrudan metni ver.
+- Mutevazı ama vizyoner bir dil kullan. Bürokratik, soğuk ama akıcı bir Türkçe tercih et.
+- Onay şansını %90'ın üzerine çıkaracak "Gerekçe-Sonuç" mantığıyla yaz.
+"""
+
+# ─── YARDIMCI FONKSİYONLAR ──────────────────────────────────────────────────
+
+async def call_groq(prompt: str, max_retries=2) -> str:
+    """Temel Groq API çağrısı, 429 hatalarını gizler ve retry yapar."""
+    for attempt in range(max_retries):
+        try:
+            response = await client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt}
+                ],
+                model="llama3-70b-8192",
+                temperature=0.6,
+                max_tokens=2500,
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            err_str = str(e).lower()
+            if "429" in err_str or "rate limit" in err_str or "resource_exhausted" in err_str:
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(3)
+                    continue
+                raise Exception("KOSGEB Yapay Zeka analiz sunucularımızda anlık bir yoğunluk yaşanıyor. Lütfen işleminizi 1-2 dakika sonra tekrar deneyiniz.")
+            raise Exception(f"Üretim Hatası: {str(e)}")
 
 
-TIMELINE_PROMPT = """
-Sen deneyimli bir KOSGEB başvuru danışmanısın.
-Aşağıdaki bilgilere dayanarak KOSGEB başvurusu için proje takvimi yaz.
+async def evaluate_and_improve(text: str, context_prompt: str) -> str:
+    """
+    Self-Correction mekanizması:
+    Üretilen metne 100 üzerinden puan verir. 90'ın altındaysa iyileştirip döndürür.
+    """
+    eval_prompt = f"""Aşağıdaki metin bir KOSGEB başvuru dokümanı için yazıldı.
+İlgili Bağlam/Görev: {context_prompt}
 
-Proje süresi: {project_duration_months} ay
-Kilometre taşları: {milestones}
-Proje başlığı: {project_title}
-Bütçe kalemleri: {budget_items}
+Değerlendirme Kriterleri (Mart 2026 Standartları):
+1. Afaki, ölçülemez, soyut ifadeler var mı?
+2. Bütçe, istihdam veya pazar hedefleri mantıklı ve destekli mi?
+3. Yapay zeka kalıpları (Tabii ki, Kesinlikle vb.) kullanılmış mı?
+4. KOSGEB uzmanının onayını %90 ihtimalle alacak ciddiyette mi?
 
-Her ay veya dönem için ne yapılacağını listele.
-Format: "Ay X-Y: [Faaliyet açıklaması]" şeklinde.
-Toplam 100-200 kelime, net ve takip edilebilir.
-""".strip()
+Görev:
+Eğer bu metin 100 üzerinden 90 ve üzeri puan almayı hak ediyorsa, sadece "<APPROVED>" yaz.
+Eğer puan 90'ın altındaysa, metindeki hataları/eksikleri düzelterek YEPYENİ, MÜKEMMEL versiyonunu yaz. (Ek açıklama yapma, sadece yeni mükemmel metni ver).
 
+İncelenecek Metin:
+{text}
+    """
+    eval_response = await call_groq(eval_prompt)
+    if "<APPROVED>" in eval_response.upper():
+        return text
+    
+    # Yeni metin üretildi, temizle ve döndür
+    return eval_response.replace("<APPROVED>", "").strip()
 
-# ─── Belge Kontrol Listesi ────────────────────────────────────────────────────
-
-DOCUMENT_CHECKLIST = {
-    "IGD": [  # İş Geliştirme Desteği
-        {
-            "id": "ruhsat",
-            "name": "İşyeri Açma ve Çalışma Ruhsatı",
-            "description": "Belediyeden alınır. İşletmenin faaliyet adresine ait olmalı.",
-            "where_to_get": "İlçe Belediyesi Ruhsat Müdürlüğü",
-            "required": True,
-        },
-        {
-            "id": "vergi_levhasi",
-            "name": "Vergi Levhası",
-            "description": "Güncel, dijital baskı kabul edilir.",
-            "where_to_get": "Gelir İdaresi Başkanlığı (gib.gov.tr) / İnteraktif Vergi Dairesi",
-            "required": True,
-        },
-        {
-            "id": "ticaret_sicil",
-            "name": "Ticaret Sicil Gazetesi",
-            "description": "Şirket kuruluş gazetesi ve varsa değişiklik gazeteleri.",
-            "where_to_get": "Türkiye Ticaret Sicili Gazetesi (ticaretsicilgazetesi.gtb.gov.tr)",
-            "required": True,
-        },
-        {
-            "id": "imza_sirküleri",
-            "name": "İmza Sirküleri",
-            "description": "Noterden onaylı, son 2 yıl içinde alınmış.",
-            "where_to_get": "Herhangi bir noter",
-            "required": True,
-        },
-        {
-            "id": "kosgeb_kayit",
-            "name": "KOSGEB Veri Tabanı Kayıt Belgesi",
-            "description": "KOSGEB portalından alınır. Aktif statüde olmalı.",
-            "where_to_get": "KOSGEB E-Hizmet Portalı (eportal.kosgeb.gov.tr)",
-            "required": True,
-        },
-        {
-            "id": "is_plani",
-            "name": "İş Planı",
-            "description": "Bu platform tarafından hazırlanmaktadır.",
-            "where_to_get": "kosgebhibe.com (hazır)",
-            "required": True,
-        },
-        {
-            "id": "proje_ozeti",
-            "name": "Proje Özeti",
-            "description": "Bu platform tarafından hazırlanmaktadır.",
-            "where_to_get": "kosgebhibe.com (hazır)",
-            "required": True,
-        },
-        {
-            "id": "butce_tablosu",
-            "name": "Bütçe Tablosu",
-            "description": "Planlanan harcamaların detaylı listesi.",
-            "where_to_get": "Bu platform (PDF içinde hazır)",
-            "required": True,
-        },
-        {
-            "id": "proforma",
-            "name": "Proforma Faturalar",
-            "description": "Satın alınacak her ürün/hizmet için en az 1 proforma.",
-            "where_to_get": "Tedarikçi firmalardan alınır.",
-            "required": True,
-        },
-        {
-            "id": "nufus",
-            "name": "Nüfus Cüzdanı Fotokopisi",
-            "description": "Yetkili kişinin kimlik fotokopisi.",
-            "where_to_get": "Nüfus cüzdanından çekilir.",
-            "required": True,
-        },
-    ],
-    "KOBIGEL": [
-        {
-            "id": "ruhsat", "name": "İşyeri Açma ve Çalışma Ruhsatı",
-            "description": "Belediyeden alınır.",
-            "where_to_get": "İlçe Belediyesi", "required": True,
-        },
-        {
-            "id": "mali_tablolar", "name": "Son 2 Yıl Mali Tablolar",
-            "description": "Bilanço ve gelir tablosu, YMM onaylı.",
-            "where_to_get": "Mali müşavirinizden alınır.", "required": True,
-        },
-        {
-            "id": "fizibilite", "name": "Fizibilite Raporu",
-            "description": "Projenin teknik ve finansal fizibilite analizi.",
-            "where_to_get": "Bu platform (Faz 2'de eklenecek)", "required": True,
-        },
-    ],
-}
-
-
-def generate_document_checklist(program_type: str) -> list[dict]:
-    """Program tipine göre belge listesi üret"""
-    key = "IGD"
-    if "KOBIGEL" in program_type.upper() or "KOBİGEL" in program_type.upper():
-        key = "KOBIGEL"
-    return DOCUMENT_CHECKLIST.get(key, DOCUMENT_CHECKLIST["IGD"])
-
-
-# ─── Ana üretim fonksiyonu ────────────────────────────────────────────────────
 
 def build_prompt(template: str, inputs: dict) -> str:
-    """Şablona verileri yerleştir, eksik değerleri 'belirtilmemiş' ile doldur"""
     from string import Formatter
     keys = [fname for _, fname, _, _ in Formatter().parse(template) if fname]
     fill = {k: inputs.get(k) or "belirtilmemiş" for k in keys}
     return template.format(**fill)
 
 
+# ─── SEKSİYON FONKSİYONLARI ──────────────────────────────────────────────────
+
+PROJECT_SUMMARY_PROMPT = """Aşağıdaki bilgilere göre KOSGEB İş Geliştirme Desteği için 400-600 kelimelik "Proje Özeti" yaz.
+
+ İŞLETME: {business_name} | NACE: {nace_code} | Şehir: {city} | Yaş: {business_age_months} ay
+ ÖZEL KATEGORİ: {special_category}
+ PROJE FİKRİ: {project_idea}
+ ÇÖZÜLEN PROBLEM: {problem_solved}
+ BÜTÇE/TALEP: {requested_amount} TL → Kalemler: {budget_items}
+ İSTİHDAM/GELİR: {employment_target} kişi, {revenue_target_year1} TL ilk yıl geliri.
+
+ Doğrudan özeti yaz, başlık atma.
+"""
+
 async def generate_project_summary(inputs: dict) -> str:
-    return await generate_text(build_prompt(PROJECT_SUMMARY_PROMPT, inputs))
+    prompt = build_prompt(PROJECT_SUMMARY_PROMPT, inputs)
+    draft = await call_groq(prompt)
+    return await evaluate_and_improve(draft, "Proje Özeti")
 
 
-async def generate_business_plan(inputs: dict) -> str:
-    return await generate_text(build_prompt(BUSINESS_PLAN_PROMPT, inputs))
+BUSINESS_PLAN_CHUNKS = [
+    ("Pazar Analizi ve Değer Önerisi", """
+İşletme: {business_name} | NACE: {nace_code} | Hedef Kitle: {target_market} | Rekabet Avantajı: {competitive_advantage}
+Bu bilgilere göre KOSGEB İş Planının "Pazar Analizi" ve "Değer Önerisi" kısımlarını yaz. 
+400 kelime civarı olsun. Akıcı ve bürokratik bir dil kullan. Başlıkları Markdown olarak at.
+    """),
+    
+    ("İş Modeli ve Pazarlama", """
+İşletme: {business_name} | NACE: {nace_code} | Hedef Kitle: {target_market} | Gelir Hedefi: {revenue_target_year1} TL
+Bu bilgilere göre KOSGEB İş Planının "İş Modeli" ve "Pazarlama ve Satış Stratejisi" kısımlarını yaz.
+400 kelime civarı olsun. Gerçekçi pazarlama yöntemlerini anlat. Başlıkları Markdown olarak at.
+    """),
+    
+    ("Operasyonel Plan ve Riskler", """
+İşletme: {business_name} | NACE: {nace_code} | Proje: {project_title}
+Bu bilgilere göre KOSGEB İş Planının "Operasyonel Plan" ve "Riskler ve Önlemler (3 ana risk)" kısımlarını yaz.
+400 kelime civarı olsun. Operasyon adımlarını mantıklı kur. Başlıkları Markdown olarak at.
+    """)
+]
 
+async def generate_business_plan_chunked(inputs: dict) -> AsyncGenerator[tuple[str, str], None]:
+    """Her parçayı ayrı üreterek limite takılmadan birleştirir. Tuple(section_name, content) döndürür."""
+    for name, template in BUSINESS_PLAN_CHUNKS:
+        prompt = build_prompt(template, inputs)
+        draft = await call_groq(prompt)
+        final_text = await evaluate_and_improve(draft, f"İş Planı - {name}")
+        yield (name, final_text)
+
+
+FINANCIAL_PROJECTION_PROMPT = """
+Aşağıdaki finansal bilgilere dayanarak 3 yıllık finansal projeksiyonun neden gerçekçi olduğunu MÜŞTERİ VEYA KOSGEB JÜRİSİ GÖZÜNDEN açıklayan profesyonel bir metin yaz.
+Bütçe kalemleri: {budget_items}
+Toplam talep: {requested_amount} TL
+1. yıl gelir hedefi: {revenue_target_year1} TL
+İstihdam: {employment_target} kişi
+Sektör: {nace_code} - {nace_description}
+
+Somut gerekçeler, maliyet analizleri, ve yatırımın KOSGEB'e (Türkiye'ye) dönüşü/katkısı (ROI) üzerinden açıklama yap. Ortalama 300 kelime. Tablo değil, metin ver.
+"""
 
 async def generate_financial_projection(inputs: dict) -> str:
-    return await generate_text(build_prompt(FINANCIAL_PROJECTION_PROMPT, inputs))
+    prompt = build_prompt(FINANCIAL_PROJECTION_PROMPT, inputs)
+    draft = await call_groq(prompt)
+    return await evaluate_and_improve(draft, "Finansal Projeksiyon Argümantasyonu")
 
+
+TIMELINE_PROMPT = """
+Proje süresi: {project_duration_months} ay
+Kilometre taşları: {milestones}
+Proje başlığı: {project_title}
+Bütçe kalemleri: {budget_items}
+
+Her ay (veya 3 aylık dönemler) için ne yapılacağını mantıklı bir iş planı sırasıyla listele. İlk ay kurulum, orta aylar operasyon, son aylar pazarlama gibi.
+Toplam 150-200 kelime. Liste formatında.
+"""
 
 async def generate_timeline(inputs: dict) -> str:
-    return await generate_text(build_prompt(TIMELINE_PROMPT, inputs))
+    prompt = build_prompt(TIMELINE_PROMPT, inputs)
+    draft = await call_groq(prompt)
+    return await evaluate_and_improve(draft, "Proje Zaman Çizelgesi")
+
+
+# ─── BELGE KONTROL LİSTESİ ────────────────────────────────────────────────────
+
+DOCUMENT_CHECKLIST = {
+    "IGD": [  
+        {"id": "ruhsat", "name": "İşyeri Açma ve Çalışma Ruhsatı", "description": "Belediyeden alınır.", "where_to_get": "İlçe Belediyesi", "required": True},
+        {"id": "vergi_levhasi", "name": "Vergi Levhası", "description": "Güncel.", "where_to_get": "GİB İnteraktif", "required": True},
+        {"id": "ticaret_sicil", "name": "Ticaret Sicil Gazetesi", "description": "Kuruluş gazetesi.", "where_to_get": "Ticaret Sicil", "required": True},
+        {"id": "kosgeb_kayit", "name": "KOSGEB Veri Tabanı Kaydı", "description": "E-KOBİ.", "where_to_get": "KOSGEB Portal", "required": True},
+        {"id": "proforma", "name": "Proforma Faturalar", "description": "Talep edilen 3 kalem için proforma.", "where_to_get": "Tedarikçiler", "required": True},
+    ],
+}
+
+def generate_document_checklist(program_type: str) -> list[dict]:
+    return DOCUMENT_CHECKLIST["IGD"]

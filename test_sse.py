@@ -72,7 +72,7 @@ def main():
             bizs = json.loads(res.read().decode())
             if not bizs:
                 print("No business found for test user. Creating one...")
-                biz_req = urllib.request.Request(f"{BASE_URL}/api/businesses/", headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"}, method="POST")
+                biz_req = urllib.request.Request(f"{BASE_URL}/api/businesses", headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"}, method="POST")
                 biz_data = json.dumps({
                   "business_name": "Demo Corporation",
                   "nace_code": "62.01",

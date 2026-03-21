@@ -15,7 +15,7 @@ from app.models import Application, ApplicationInput, Business, User
 from app.schemas import ApplicationCreate, ApplicationInputSubmit, ApplicationResponse, MessageResponse
 from app.utils.deps import get_current_user
 from app.services.ai_generator import (
-    generate_project_summary, generate_business_plan,
+    generate_project_summary, generate_business_plan_chunked,
     generate_financial_projection, generate_timeline,
     generate_document_checklist,
 )
@@ -215,11 +215,18 @@ async def stream_progress(
             yield _sse_msg({"progress": 30, "text": "Proje özeti tamamlandı.", "field": "project_summary", "value": summary})
 
             # 2. İş planı
-            yield _sse_msg({"progress": 35, "text": "İş planı yazılıyor..."})
-            business_plan = await generate_business_plan(inputs_dict)
+            yield _sse_msg({"progress": 35, "text": "İş planı alt bölümlerine ayrılıyor..."})
+            business_plan_parts = []
+            chunk_progress = 35
+            async for section_name, section_text in generate_business_plan_chunked(inputs_dict):
+                chunk_progress += 7
+                yield _sse_msg({"progress": chunk_progress, "text": f"'{section_name}' bölümü yazıldı ve kalite kontrolünden geçti..."})
+                business_plan_parts.append(f"## {section_name}\n\n{section_text}")
+            
+            business_plan = "\n\n".join(business_plan_parts)
             app.business_plan = business_plan
             await db.commit()
-            yield _sse_msg({"progress": 58, "text": "İş planı tamamlandı.", "field": "business_plan", "value": business_plan})
+            yield _sse_msg({"progress": 58, "text": "Kapsamlı İş Planı tamamlandı.", "field": "business_plan", "value": business_plan})
 
             # 3. Finansal projeksiyon
             yield _sse_msg({"progress": 60, "text": "Finansal tablo hazırlanıyor..."})
