@@ -55,7 +55,7 @@ export default function UretimPage() {
     const es = new EventSource(`${url}?token=${token}`)
     esRef.current = es
 
-    es.addEventListener('progress', (e) => {
+    es.addEventListener('message', (e) => {
       const data = JSON.parse(e.data)
       
       if (data.error) {
