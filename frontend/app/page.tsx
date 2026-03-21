@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import styles from './page.module.css'
+import NewsletterForm from '@/components/NewsletterForm'
 
 export const metadata: Metadata = {
   title: 'KOSGEB Hibe Başvurusu Hazırlık Platformu — kosgebhibe.com',
@@ -197,17 +198,7 @@ export default function HomePage() {
                   Başvuru dönemi açıldığında e-posta ile bildirim alın. Ücretsiz.
                 </p>
               </div>
-              <form className={styles.notifyForm}>
-                <input
-                  type="email"
-                  className="input"
-                  placeholder="E-posta adresiniz"
-                  style={{ maxWidth: '280px' }}
-                />
-                <button type="submit" className="btn btn-primary">
-                  Bildir
-                </button>
-              </form>
+              <NewsletterForm className={styles.notifyForm} />
             </div>
           </div>
         </section>
