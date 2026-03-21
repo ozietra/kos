@@ -12,5 +12,5 @@ jobs:
     steps:
       - name: Ping backend health endpoint
         run: |
-          curl -sf https://kosgeb-backend-xxxx.onrender.com/health || echo "Backend uyandırılıyor..."
+          curl -sf https://kosgeb-backend.onrender.com/api/health || echo "Backend uyandırılıyor..."
         # Not: URL'i Render'dan aldıktan sonra güncelleyin
