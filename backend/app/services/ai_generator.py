@@ -46,7 +46,7 @@ async def call_groq(prompt: str, max_retries=2) -> str:
                 if attempt < max_retries - 1:
                     await asyncio.sleep(3)
                     continue
-                raise Exception("KOSGEB Yapay Zeka analiz sunucularımızda anlık bir yoğunluk yaşanıyor. Lütfen işleminizi 1-2 dakika sonra tekrar deneyiniz.")
+                raise Exception("Analiz sunucularımızda anlık bir yoğunluk yaşanıyor. Lütfen işleminizi 1-2 dakika sonra tekrar deneyiniz.")
             raise Exception(f"Üretim Hatası: {str(e)}")
 
 
@@ -182,3 +182,40 @@ DOCUMENT_CHECKLIST = {
 
 def generate_document_checklist(program_type: str) -> list[dict]:
     return DOCUMENT_CHECKLIST["IGD"]
+
+# ─── NACE KODU ÖNERİSİ ────────────────────────────────────────────────────────
+
+async def suggest_nace(description: str) -> dict:
+    """Kullanıcının sektör açıklamasına göre NACE kodu önerir (Groq Llama-3 Tarafından)."""
+    prompt = f"""Aşağıdaki iş fikrini analiz et ve en uygun KOSGEB NACE kodunu bul.
+İş Fikri: {description}
+
+LÜTFEN SADECE VE SADECE JSON FORMATINDA YANIT VER. BAŞKA HİÇBİR AÇIKLAMA VEYA METİN YAZMA.
+{{
+    "nace_code": "Örn: 62.01",
+    "nace_description": "Örn: Bilgisayar programlama faaliyetleri",
+    "is_kosgeb_eligible": true,
+    "confidence": "high",
+    "alternative_codes": ["62.02", "62.09"]
+}}
+"""
+    try:
+        response = await client.chat.completions.create(
+            messages=[{"role": "user", "content": prompt}],
+            model="llama3-70b-8192",
+            temperature=0.1,
+            max_tokens=500,
+        )
+        text = response.choices[0].message.content.strip()
+        import json
+        if text.startswith("```json"):
+            text = text.replace("```json", "").replace("```", "").strip()
+        return json.loads(text)
+    except Exception as e:
+        return {
+            "nace_code": "00.00",
+            "nace_description": f"Sorgu hatası: {str(e)[:50]}",
+            "is_kosgeb_eligible": False,
+            "confidence": "low",
+            "alternative_codes": []
+        }

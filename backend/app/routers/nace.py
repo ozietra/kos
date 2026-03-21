@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.database import get_db
 from app.schemas import NaceSuggestRequest, NaceSuggestResponse
-from app.services.gemini import suggest_nace
+from app.services.ai_generator import suggest_nace
 
 router = APIRouter(prefix="/api/nace", tags=["nace"])
 
