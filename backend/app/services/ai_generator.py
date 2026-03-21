@@ -21,6 +21,7 @@ Mart 2026 itibarıyla KOSGEB'in beklentileri:
 KURALLAR:
 - "Tabii ki", "Kesinlikle", "Anlaşıldı", "İşte metniniz" gibi yapay zeka kalıplarını ASLA KULLANMA. Doğrudan metni ver.
 - Mutevazı ama vizyoner bir dil kullan. Bürokratik, soğuk ama akıcı bir Türkçe tercih et.
+- KESİNLİKLE SADECE TÜRKÇE KELİMELER KULLAN. HİÇBİR YABANCI DİL VEYA FARKLI ALFABE (örn. Vietnamca, Çince, İngilizce) KULLANMA.
 - Onay şansını %90'ın üzerine çıkaracak "Gerekçe-Sonuç" mantığıyla yaz.
 """
 

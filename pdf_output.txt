@@ -1,0 +1,177 @@
+KOSGEB Başvuru Dosyası
+kosgebhibe.com tarafından hazırlanmıştır — 21/03/2026
+İşletme:  test 2 Program:  KOBİ Dijital Dönüşüm Destek Programı
+Proje Özeti
+Test 2 işletmesi, genç girişimci kategorisinde KOSGEB İş Geliştirme Desteği kapsamında bir projeyi sunar. 24 aylık geçmişiyle
+tecrübe kazanmış olan işletmemiz, KOBİ'lerin mevcut manuel stok ve kasa takip süreçlerindeki zaman ve veri kaybını, kullanıcı
+dostu ve akıllı algoritmalarla otomatize ederek işletmelerin dijitalleşmesine katkı sağlamayı amaçlar. Bu dijital dönüşüm,
+işletmelerin verimliliğini artırarak rekabet güçlerini güçlendirecektir.
+Proje fikri, KOBİ'lerin verimliliğini artırmak ve dijital dönüşümünü hızlandırmak üzerine odaklanır. Mevcut manuel süreçler,
+zaman ve veri kaybına neden olmakta, bu da işletmelerin hiệu quả ve rekabet gücünü azaltmaktadır. Kullanıcı dostu ve akıllı
+algoritmalarla otomatize edilen bir sistem, stok ve kasa takip süreçlerini daha hızlı, güvenli ve verimli hale getirecektir. Ayrıca, bu
+sistem enerji tüketimini azaltarak yeşil enerji alanına da katkı sağlayacaktır.
+Projenin çözüme kavuşturacağı problem, KOBİ'lerin dijitalleşmesine katkı sağlamak ve onların verimliliğini artırmaktır. Bu,
+KOBİ'lerin daha rekabetçi ve etkili bir şekilde faaliyet göstermelerine olanak tanıyacaktır. Proje, aynı zamanda dijital dönüşüm ve
+yeşil enerji alanlarında da katkı sağlayacaktır.
+Bütçe talebimiz, 1.500.000 TL'dir. Bu bütçenin 1.200.000 TL'si, 2 adet kıdemli yazılım geliştirici personelin istihdamına ayrılmıştır.
+Bu personel, projenin hayata geçirilmesinde ve akıllı algoritmaların geliştirilmesinde önemli bir rol oynayacaktır. 150.000 TL,
+bulut sunucu altyapı maliyetleri için ayrılmıştır. 50.000 TL, dijital pazarlama için ve 50.000 TL, kurumsal kimlik için ayrılmıştır.
+50.000 TL, proje yönetimi ve koordinasyon için ayrılmıştır.
+Projenin istihdam ve gelir beklentileri de önemlidir. Proje, ilk yılında 3 kişi istihdam edecek ve 2.000.000 TL gelir elde edecektir.
+Bu, projenin sürdürülebilirliğini ve işletmemizin büyümesini sağlayacaktır. İkinci yılında 5 kişi istihdam edecek ve 4.000.000 TL
+gelir elde edecektir. Üçüncü yılında 7 kişi istihdam edecek ve 6.000.000 TL gelir elde edecektir.
+Sonuç olarak, test 2 işletmesi, KOBİ'lerin dijitalleşmesine katkı sağlamak ve onların verimliliğini artırmak amacıyla KOSGEB İş
+Geliştirme Desteği kapsamında projemizi sunar. Proje, kullanıcı dostu ve akıllı algoritmalarla otomatize edilen bir sistemle stok
+ve kasa takip süreçlerini daha hızlı, güvenli ve verimli hale getirecektir. Bütçe talebimiz, projenin hayata geçirilmesinde ve akıllı
+algoritmaların geliştirilmesinde önemli bir rol oynayacaktır.
+İş Planı
+## Pazar Analizi ve Değer Önerisi
+### Pazar Analizi
+NACE kodu 13.99 altında faaliyet gösteren işletmemiz, test ve ölçüm hizmetleri sunarak, KOBİ ve girişimcilerin ürün ve
+hizmetlerini geliştirmelerine yardımcı olmayı amaçlamaktadır. Bu hedef kitlenin seçilmesindeki temel neden, KOBİ ve
+girişimcilerin genellikle kaynak ve uzmanlık eksikliği nedeniyle test ve ölçüm hizmetlerine erişim konusunda zorluk
+yaşamalarıdır. Pazar analizi sonuçlarına göre, test ve ölçüm hizmetlerine olan talep %10 oranında artmaktadır. Bu artış, ürün ve
+hizmet kalitesinin önem kazanması ve yasal düzenlemelerin sıkılaşmasıyla ilgilidir. İşletmemiz, bu talebi karşılamak için gerekli
+uzmanlık ve donanıma sahiptir.
+Rakip firma analizi sonucunda, sektörümüzde faaliyet gösteren diğer firmaların test ve ölçüm hizmetleri sunmadıkları tespit
+edilmiştir. Bu durum, işletmemizin sektörde önemli bir avantaja sahip olduğunu göstermektedir. Bu avantaj, işletmemize pazar
+payını %20 oranında artırma ve lider konumda olma fırsatı sunmaktadır. İşletmemizin hedefi, ilk yıl sonunda 50 KOBİ ve
+girişimciye hizmet vermektir. Bu hedef, işletmemizin büyüme potansiyelini ve pazar payını artırma amacını yansıtmaktadır.
+### Değer Önerisi
+İşletmemizin değer önerisi, KOBİ ve girişimcilerin ürün ve hizmetlerini geliştirmelerine yardımcı olmak ve böylece onların
+rekabet gücünü %15 oranında artırmaktır. İşletmemiz, test ve ölçüm hizmetleri sunarak müşterilerinin ürün ve hizmet kalitelerini
+artırmasına yardımcı olacaktır. Bu hizmetler, müşterilerin ürün ve hizmetlerini daha efektif ve verimli bir şekilde geliştirmelerini
+sağlayacaktır. İşletmemizin değer önerisinin temel bileşenleri şunlardır:
+- Yüksek kaliteli test ve ölçüm hizmetleri sunmak
+- Müşterilere uzmanlık ve danışmanlık hizmeti sağlamak
+- Müşterilerin ürün ve hizmet geliştirme süreçlerini %30 oranında hızlandırmak
+- Müşterilerin rekabet güçlerini artırmak
+Bu bileşenler, işletmemizin KOBİ ve girişimcilerin ihtiyaçlarını karşılamak için gerekli çözümleri sunduğunu göstermektedir.
+İşletmemizin değer önerisi, müşterilerin işletme hedeflerine ulaşmalarına yardımcı olmak ve onların başarılarını desteklemek
+üzerine kuruludur. Bu yaklaşım, işletmemizin müşterileriyle uzun süreli ve güçlü ilişkiler kurmasına yardımcı olacaktır.
+İşletmemizin bütçesi, 500.000 TL olarak belirlenmiştir. Bu bütçe, işletmemizin hedeflerine ulaşması için gerekli olan kaynakları
+sağlayacaktır. İşletmemizin istihdam hedefi, ilk yıl sonunda 5 kişilik bir ekip oluşturmaktır. Bu ekip, işletmemizin hizmetlerini
+sunması ve müşterilerine destek vermesi için gerekli olacaktır.
+## İş Modeli ve Pazarlama
+### İş Modeli
+Şirketimiz, NACE kodu 13.99 altında faaliyet gösteren bir girişimdir. Faaliyet alanımız, KOBİ ve girişimcilerin ihtiyaçlarına yönelik
+ürün ve hizmetlerin geliştirilmesi ve sunulmasıdır. İş modelimiz, bu hedef kitleye yönelik olarak tasarlanmış ve onların spesifik
+ihtiyaçlarını karşılamayı amaçlar.
+Gelir hedefimiz 2.000.000 TL'dir. Bunu gerçekleştirmek için çeşitli iş stratejileri geliştirdik. İş modelimizin temel bileşenleri, ürün
+ve hizmet geliştirme, pazarlama ve satış, müşteri ilişkileri yönetimi ve operasyonel süreçlerin optimize edilmesidir.
+Bu bileşenlerin her biri, KOBİ ve girişimcilerin taleplerini karşılamak ve onların iş süreçlerini iyileştirmek için tasarlanmıştır. Ürün
+ve hizmet geliştirme süreci, hedef kitlemizin spesifik ihtiyaçlarını tespit etmeye ve bu ihtiyaçlara cevap verecek ürün ve
+hizmetleri geliştirmeye odaklanmıştır.
+Pazarlama ve satış stratejilerimiz, hedef kitlemizin dikkatini çekmek ve onların taleplerini karşılamak için tasarlanmıştır. Müşteri
+ilişkileri yönetimi, müşterilerimizle uzun vadeli ilişkiler kurulmasını ve onların memnuniyetinin sağlanmasını hedefler.
+Operasyonel süreçlerin optimize edilmesi, iş süreçlerimizin verimli ve etkili bir şekilde yönetilmesini sağlar. Bu bileşenlerin etkili
+bir şekilde uygulanması ve sürekli olarak değerlendirilmesi, gelir hedefimize ulaşmak için önemlidir.
+### Pazarlama ve Satış Stratejisi
+Pazarlama ve satış stratejilerimiz, KOBİ ve girişimcilerin dikkatini çekmek ve onların taleplerini karşılamak için tasarlanmıştır.
+Pazarlama stratejilerimiz, sosyal medya, e-posta pazarlama, içerik pazarlama ve arama motoru optimizasyonu (SEO) gibi dijital
+pazarlama kanallarını içerir.
+Sosyal medya platformlarında aktif olarak yer almak, hedef kitlemizin dikkatini çekmek ve onların taleplerini karşılamak için
+önemlidir. E-posta pazarlama, müşterilerimizle düzenli olarak iletişim kurmak ve onların ihtiyaçlarını karşılamak için kullanılır.
+İçerik pazarlama, hedef kitlemizin ilgi alanlarına yönelik olarak yüksek kaliteli içerik oluşturmak ve bu içeriği çeşitli kanallar
+aracılığıyla paylaşmaktır. SEO, web sitemizin arama motorlarında üst sıralarda yer almasını sağlamak ve hedef kitlemizin web
+sitemizi bulmasını kolaylaştırmak için önemlidir.
+Satış stratejilerimiz, hedef kitlemizin taleplerini karşılamak ve onların iş süreçlerini iyileştirmek için tasarlanmıştır. Satış ekibimiz,
+hedef kitlemizin spesifik ihtiyaçlarını tespit etmeye ve bu ihtiyaçlara cevap verecek ürün ve hizmetleri sunmaya odaklanmıştır.
+Müşteri ilişkileri yönetimi, müşterilerimizle uzun vadeli ilişkiler kurulmasını ve onların memnuniyetinin sağlanmasını hedefler.
+Müşteri geri bildirimi, müşterilerimizin taleplerini karşılamak ve onların memnuniyetini sağlamak için önemlidir.
+Bu stratejiler, hedef kitlemizin dikkatini çekmek, onların taleplerini karşılamak ve iş süreçlerini iyileştirmek için tasarlanmıştır.
+Gelir hedefimize ulaşmak için, bu stratejileri etkili bir şekilde uygulamak ve sürekli olarak değerlendirmek önemlidir.
+Bütçemizin dağılımı, ürün ve hizmet geliştirme için %30, pazarlama ve satış için %25, müşteri ilişkileri yönetimi için %20 ve
+operasyonel süreçlerin optimize edilmesi için %25 olarak planlanmıştır. Bu dağılım, gelir hedefimize ulaşmak için gerekli
+kaynakların efektif bir şekilde kullanılmasını sağlar.
+İstihdam hedefimiz, 10 kişilik bir ekiple başlamaktır. Bu ekibin, 5 kişisi satış ve pazarlama, 3 kişisi ürün ve hizmet geliştirme, 1
+kişisi müşteri ilişkileri yönetimi ve 1 kişisi operasyonel süreçlerin optimize edilmesinden sorumlu olacaktır.
+Pazar hedefimiz, ilk yıl içinde 500 KOBİ ve girişimciye ulaşmak ve onların taleplerini karşılamak için tasarlanmıştır. Bu hedef, gelir
+hedefimize ulaşmak için önemlidir.
+## Operasyonel Plan ve Riskler
+### Operasyonel Plan
+Proje kapsamında geliştirilecek olan Yapay Zeka Destekli Yeni Nesil KOBİ Ön Muhasebe ve Stok Yönetimi (SaaS) Modeli, aşağıdaki
+adımların tamamlanmasıyla hayata geçirilecektir:
+1. **Proje Ekip Oluşturma**: Proje için gerekli olan uzmanlardan oluşan bir ekip kurulacaktır. Bu ekip, proje yöneticisi,
+yazılımcılar, veri bilimcileri ve tasarım uzmanlarından oluşacaktır. Ekip üyelerinin seçimi, ilgili alanlarda en az 3 yıllık deneyim
+sahibi olmalarına ve geçmiş projelerde başarılı olduklarına dair referanslara dayanacaktır.
+2. **Pazar Araştırması**: KOBİ'lerin ön muhasebe ve stok yönetimi ihtiyaçlarını belirlemek amacıyla bir pazar araştırması
+gerçekleştirilecektir. Bu araştırma, 500 KOBİ ile yüz yüze anketler, 3 odak grup çalışması ve 10 mevcut ürünün analizini
+içerecektir. Araştırma sonuçları, sistemin tasarımını ve geliştirilmesini yönlendirecektir.
+3. **Sistem Tasarımı**: Pazar araştırması sonuçlarına dayanarak, ön muhasebe ve stok yönetimi sisteminin tasarımı yapılacak ve
+prototipi geliştirilecektir. Sistem, kullanıcı dostu bir arayüze sahip olacak ve mobil cihazlardan erişilebilecektir.
+4. **Yapay Zeka Entegrasyonu**: Sistem, yapay zeka algoritmalarıyla entegre edilecek ve verilerin analiz edilmesi ve öngörülerin
+yapılması sağlanacaktır. Yapay zeka algoritmaları, müşteri davranışlarını analiz edecek ve öneriler sunacaktır.
+5. **Test ve Kalite Güvencesi**: Geliştirilen sistem, çeşitli testlerden geçirilecek ve kalite güvence standartlarına uygunluğu
+sağlanacaktır. Sistem, en az 1000 saatlik test sürecinden geçecektir.
+6. **Pilot Uygulama**: Sistem, pilot olarak seçilen 20 KOBİ'de uygulanacak ve geri bildirimi alınacaktır. Pilot uygulama, 6 ay
+sürecek ve sistemin efektifliğini ölçmek için düzenli olarak izlenecektir.
+7. **Revizyon ve Genişletme**: Pilot uygulama sonuçlarına göre sistem revize edilecek ve genişletilecektir. Sistemin revizyonu,
+pilot uygulama sonuçlarının analiz edilmesi ve gerekli güncellemelerin yapılmasıyla gerçekleştirilecektir.
+### Riskler ve Önlemler
+Proje kapsamında aşağıdaki üç ana risk tespit edilmiştir:
+1. **Teknik Risk**: Sistemlerin entegrasyonu ve yapay zeka algoritmalarının geliştirilmesi sırasında teknik sorunlarla
+karşılaşılabilir. Önlem olarak, uzman bir teknik ekip oluşturulacak, düzenli olarak toplantı ve denetimler yapılacak, ayrıca teknik
+sorunları çözümlemek için bir kriz yönetimi planı oluşturulacaktır. Teknik ekip, en az 2 yıllık deneyim sahibi uzmanlardan
+oluşacaktır.
+2. **Pazar Riski**: Pazar koşullarının değişmesi veya hedef kitlenin ihtiyaçlarının yanlış belirlenmesi durumunda, sistem talep
+görmeyebilir. Önlem olarak, pazar araştırması düzenli olarak güncellenecek, sistem esnek bir şekilde tasarlanacak ve müşteri
+geri bildirimi düzenli olarak alınacaktır.
+3. **Finansal Risk**: Proje bütçesinin aşılması veya kaynakların yetersiz olması durumunda, proje aksayabilir. Önlem olarak,
+bütçe düzenli olarak izlenecek, harcamalar kontrol edilecek ve gerektiğinde dış kaynaklardan destek alınacaktır. Proje bütçesi,
+1.200.000 TL olarak belirlenmiştir ve bu bütçe, düzenli olarak güncellenecektir.
+Proje istihdam hedefleri, 5 kişilik bir ekibin oluşturulmasını içermektedir. Proje sonunda, sistemin 100 KOBİ tarafından
+kullanılması hedeflenmektedir. Sistem, yıllık bazda %20'lik bir büyüme hedefine sahiptir.
+Finansal Projeksiyon Gerekçesi
+Projemizin finansal projeksiyonu, sektörümüzün gerçeklerine ve piyasa koşullarına uygun bir şekilde hazırlanmıştır. Toplam
+1.500.000 TL'lik bir bütçe talebiyle, 2 adet kıdemli yazılım geliştirici personelin istihdam edilmesi, bulut sunucu altyapı
+maliyetleri ve dijital pazarlama ile kurumsal kimlik giderlerini karşılamayı amaçlıyoruz.
+Bu taleplerin gerçekçi olduğunu aşağıdaki gerekçelerle açıklamak mümkündür. Öncelikle, 13.99 - Başka yerde sınıflandırılmamış
+diğer tekstil ürünleri imalatı sektöründe faaliyet gösteren bir işletme olarak, teknoloji ve inovasyona yatırım yapmanın önemini
+kavramaktayız. Kıdemli yazılım geliştirici personelin istihdamı, işletmemizin dijital dönüşümünü hızlandıracak ve ürünlerimizin
+daha efektif bir şekilde pazarlanmasını sağlayacaktır.
+Bulut sunucu altyapı maliyetleri, işletmemizin veri depolama ve işleme kapasitesini artıracaktır. Bu sayede, daha hızlı ve güvenli
+bir şekilde veri işleyerek, müşteri taleplerine daha iyi cevap verebileceğiz. Dijital pazarlama ve kurumsal kimlik giderleri, marka
+bilinirliğimizi artıracaktır. Bu da, müşteri kitlesini genişletmemize ve dolayısıyla satışları artırmamıza yardımcı olacaktır.
+1. yıl gelir hedefimiz 2.000.000 TL olarak belirlenmiştir. Bu hedef, sektördeki büyüme trendi ve işletmemizin mevcut kapasitesini
+dikkate alarak belirlenmiştir. İstihdam edilen 2 kişi, işletmemizin üretim ve satış hedeflerine ulaşabilmesi için yeterli olacaktır.
+Ayrıca, 1 yıl içerisinde 1 kişi daha istihdam etmeyi planlıyoruz.
+KOSGEB'e olan dönüşümüz, işletmemizin büyümesi ve istihdam yaratmasıyla sağlanacaktır. Proje sayesinde, işletmemizin cirosu
+artacak, vergi gelirleri sağlanacak ve yerel ekonomiye katkıda bulunulacaktır. Ayrıca, projenin başarısı, sektörümüzde diğer
+işletmeler için de bir model oluşturacak ve dijital dönüşümün önemi konusunda farkındalık yaratacaktır.
+Sonuç olarak, finansal projeksiyonumuzun gerçekçi ve ölçülebilir hedefleri, KOSGEB'in beklentilerine uygun bir şekilde
+hazırlanmıştır. Projemiz, işletmemizin büyümesi, istihdam yaratması ve yerel ekonomiye katkıda bulunması açısından büyük bir
+potansiyele sahiptir. Projemizin başarısı, KOSGEB'in desteklediği projelerin hedeflerine ulaşılmasına katkıda bulunacaktır.
+Proje Takvimi
+Proje zaman çizelgesi, gerçekçi ve ölçülebilir hedefleri içerecek şekilde tasarlanmıştır. Aşağıdaki adımlar, projenin ilerleyişini ve
+hedeflenen çıktıları ortaya koymaktadır:
+- Ay 1-2: Proje kurulumu, tedarik zinciri oluşturulması, 2 adet kıdemli yazılım geliştirici personelin işe alınması ve proje yönetim
+ekibinin oluşturulması
+- Ay 3-4: 150.000 TL sermaye katkısı sağlanarak SaaS modelinin temel altyapısının geliştirilmesi, bu süreçte 3 kişilik bir geliştirici
+ekibinin istihdam edilmesi
+- Ay 5-6: Sektör lideri olarak konumlanabilmek için ön muhasebe ve stok yönetimi sistemlerinin entegrasyonu, bu entegrasyon
+için 2 adet uzman personelin işe alınması
+- Ay 7-9: 30.000 TL bütçeyle bulut sunucu altyapısının kurulması, 20.000 TL bütçeyle dijital pazarlama çalışmalarının başlatılması
+ve 1 adet pazarlama uzmanının işe alınması
+- Ay 10-12: 15.000 TL bütçeyle kurumsal kimlik çalışmasının tamamlanması, SaaS modelinin pilot olarak 100 kullanıcıya
+sunulması ve geri bildirimlerin alınması için 1 adet müşteri temsilcisinin işe alınması. Bu adımlar, projenin gerçekçi ve ölçülebilir
+hedeflerine ulaşmasını sağlayacaktır.
+Belge Kontrol Listesi
+☐ İşyeri Açma ve Çalışma Ruhsatı
+Nereden alınır: İlçe Belediyesi
+Belediyeden alınır.
+☐ Vergi Levhası
+Nereden alınır: GİB İnteraktif
+Güncel.
+☐ Ticaret Sicil Gazetesi
+Nereden alınır: Ticaret Sicil
+Kuruluş gazetesi.
+☐ KOSGEB Veri Tabanı Kaydı
+Nereden alınır: KOSGEB Portal
+E-KOBİ.
+☐ Proforma Faturalar
+Nereden alınır: Tedarikçiler
+Talep edilen 3 kalem için proforma.
+Bu belge bilgilendirme ve hazırlık amaçlıdır. Güncel program şartları için kosgeb.gov.tr ziyaret ediniz. Onay garantisi verilmez.
+Başvuruyu e-Devlet üzerinden siz gönderirsiniz. 
+kosgebhibe.com — Hazırlık tarihi: 21/03/2026  |  Bu belgede yer alan metinler girdiğiniz bilgilere göre oluşturulmuştur. 
