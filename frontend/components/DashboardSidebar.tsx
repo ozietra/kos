@@ -9,11 +9,6 @@ const NAV = [
   { href: '/dashboard', label: 'Ana Sayfa', icon: '⊞' },
 ]
 
-const TOOLS = [
-  { href: '/uygunluk-testi', label: 'Uygunluk Testi', icon: '✓' },
-  { href: '/nace-kodu-sorgula', label: 'NACE Sorgula', icon: '🔍' },
-]
-
 export default function DashboardSidebar() {
   const path = usePathname()
 
@@ -35,18 +30,6 @@ export default function DashboardSidebar() {
             key={item.href}
             href={item.href}
             className={`${styles.navItem} ${path === item.href ? styles.active : ''}`}
-          >
-            <span className={styles.icon}>{item.icon}</span>
-            {item.label}
-          </Link>
-        ))}
-
-        <div className="label" style={{ marginTop: '24px', marginBottom: '8px' }}>Ücretsiz Araçlar</div>
-        {TOOLS.map(item => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={styles.navItem}
           >
             <span className={styles.icon}>{item.icon}</span>
             {item.label}
