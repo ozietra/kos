@@ -1,0 +1,54 @@
+.postGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.postCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.postCard:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 4px 20px rgba(192, 57, 43, 0.08);
+}
+
+.postCategory {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.postTitle {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.postExcerpt {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.readMore {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-top: auto;
+}
+
+@media (max-width: 640px) {
+  .postGrid { grid-template-columns: 1fr; }
+}

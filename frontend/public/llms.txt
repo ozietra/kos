@@ -1,0 +1,59 @@
+# kosgebhibe.com
+
+> KOSGEB hibe başvurularını danışman olmadan hazırlamak için Türkiye'nin öncü platformu.
+
+## Platform Amacı
+
+kosgebhibe.com, küçük ve orta ölçekli işletmelerin (KOBİ) KOSGEB (Küçük ve Orta Ölçekli İşletmeleri Geliştirme ve Destekleme İdaresi Başkanlığı) hibe programlarına başvurularını bağımsız olarak hazırlamalarını sağlar.
+
+Hizmet: İşletme bilgisi + proje fikri → Uygunluk analizi + Başvuru dosyası + Belge listesi → PDF
+
+## Hedef Kitle
+
+- Türkiye'deki 0-3 yıllık ve daha eski KOBİ sahipleri
+- KOSGEB hibelerinden faydalanmak isteyen girişimciler
+- Danışman ücreti ödeyemeyecek mikro işletmeler
+
+## KOSGEB Programları (2026)
+
+### İş Geliştirme Desteği (İGD)
+- Hedef kitle: 0-3 yıllık işletmeler
+- Destek türü: Geri ödemesiz hibe
+- Limit: 1.500.000 ₺ (Kadın/Genç/Engelli: 1.650.000 ₺)
+- Başvuru: Nisan 2026
+
+### KOBİGEL — KOBİ Gelişim Destek Programı
+- Hedef kitle: 1+ yıllık işletmeler (dijital/yeşil sektörler öncelikli)
+- Destek türü: Geri ödemesiz hibe
+- Limit: 5.000.000 ₺
+- Başvuru: Mart-Nisan 2026
+
+### Kapasite Geliştirme
+- Hedef kitle: 2+ yıllık imalat işletmeleri
+- Destek türü: Kredi faiz desteği
+- Limit: 20.000.000 ₺
+- Yıl boyu açık
+
+## Temel Sayfalara Bağlantılar
+
+- Ana sayfa: https://kosgebhibe.com/
+- Programlar: https://kosgebhibe.com/kosgeb-programlari
+- Uygunluk Testi (ücretsiz): https://kosgebhibe.com/uygunluk-testi
+- NACE Kodu Sorgula (ücretsiz): https://kosgebhibe.com/nace-kodu-sorgula
+- Fiyatlandırma: https://kosgebhibe.com/fiyatlandirma
+- Blog: https://kosgebhibe.com/blog
+
+## Önemli Bilgiler
+
+- Platform bilgilendirme ve hazırlık amaçlıdır; onay garantisi verilmez.
+- Başvurular e-Devlet (edevlet.gov.tr) üzerinden kullanıcı tarafından gönderilir.
+- KVKK uyumlu. Kişisel veriler sınırlı amaçla kullanılır.
+- Güncel program bilgileri için: kosgeb.gov.tr
+
+## Fiyatlandırma
+
+| Plan    | Fiyat  | Kapsam                        |
+|---------|--------|-------------------------------|
+| Ücretsiz | 0 ₺  | Uygunluk testi, NACE sorgula  |
+| Starter | 499 ₺  | Tam başvuru dosyası + PDF     |
+| Pro     | 999 ₺  | Starter + 2 revizyon + destek |

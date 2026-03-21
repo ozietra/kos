@@ -1,0 +1,111 @@
+.article {
+  padding: 60px 0 80px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-bottom: 24px;
+}
+
+.breadcrumb a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover { color: var(--color-accent); }
+
+.articleHeader {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.articleMeta {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.content {
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--color-text-primary);
+}
+
+.content h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 36px 0 14px;
+  color: var(--color-text-primary);
+}
+
+.content h3 {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 24px 0 10px;
+}
+
+.content p { margin-bottom: 14px; }
+
+.content li {
+  margin-left: 24px;
+  margin-bottom: 6px;
+  color: var(--color-text-secondary);
+}
+
+.content strong { color: var(--color-text-primary); }
+
+.content hr {
+  margin: 32px 0;
+}
+
+.ctaBox {
+  background: var(--color-accent-light);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  margin-top: 40px;
+}
+
+/* ── Blog Tablosu ── */
+.content :global(.blog-table-wrap) {
+  overflow-x: auto;
+  margin: 24px 0;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+}
+
+.content :global(.blog-table) {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.content :global(.blog-table th) {
+  background: var(--color-surface-2);
+  color: var(--color-text-primary);
+  font-weight: 700;
+  padding: 10px 16px;
+  text-align: left;
+  border-bottom: 2px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.content :global(.blog-table td) {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.content :global(.blog-table tr:last-child td) {
+  border-bottom: none;
+}
+
+.content :global(.blog-table tr:hover td) {
+  background: var(--color-surface-2);
+}
