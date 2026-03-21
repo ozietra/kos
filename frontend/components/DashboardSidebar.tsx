@@ -7,14 +7,11 @@ import styles from './DashboardSidebar.module.css'
 
 const NAV = [
   { href: '/dashboard', label: 'Ana Sayfa', icon: '⊞' },
-  { href: '/dashboard/isletmelerim', label: 'İşletmelerim', icon: '🏢' },
-  { href: '/dashboard/basvurularim', label: 'Başvurularım', icon: '📋' },
 ]
 
 const TOOLS = [
   { href: '/uygunluk-testi', label: 'Uygunluk Testi', icon: '✓' },
   { href: '/nace-kodu-sorgula', label: 'NACE Sorgula', icon: '🔍' },
-  { href: '/kosgeb-programlari', label: 'Aktif Programlar', icon: '📢' },
 ]
 
 export default function DashboardSidebar() {

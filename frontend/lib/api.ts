@@ -68,7 +68,7 @@ export const businesses = {
 // ── Eligibility ───────────────────────────────────────────────────────────────
 export const eligibility = {
   check: (business_id: string) =>
-    request<any>('/eligibility/check', { method: 'POST', body: JSON.stringify({ business_id }) }),
+    request<any>(`/eligibility/check?business_id=${business_id}`, { method: 'POST' }),
   getLast: (business_id: string) =>
     request<any>(`/eligibility/${business_id}`),
 }
