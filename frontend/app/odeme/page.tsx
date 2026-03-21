@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import DashboardLayout from '@/components/DashboardLayout'
@@ -7,7 +8,7 @@ import { useDashboardAuth } from '@/hooks/useDashboardAuth'
 import { payments } from '@/lib/api'
 import styles from './page.module.css'
 
-export default function OdemePage() {
+function OdemeInner() {
   const { user, loading } = useDashboardAuth()
   const params = useSearchParams()
   const router = useRouter()
@@ -19,8 +20,8 @@ export default function OdemePage() {
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState('')
 
-  const price = plan === 'pro' ? '999' : '499'
-  const planLabel = plan === 'pro' ? 'Pro' : 'Starter'
+  const price = '499'
+  const planLabel = 'Starter'
 
   async function loadCheckout() {
     if (!applicationId) return
@@ -46,7 +47,6 @@ export default function OdemePage() {
     }
   }, [loading, user, applicationId])
 
-  // iyzico form script ekleme
   useEffect(() => {
     if (checkoutHtml) {
       const div = document.getElementById('iyzico-checkout')
@@ -79,7 +79,6 @@ export default function OdemePage() {
       <div className={styles.page}>
         <h1 className={styles.title}>Ödeme</h1>
 
-        {/* Sipariş özeti */}
         <div className="card" style={{ marginBottom: '24px', maxWidth: '480px' }}>
           <div className="card-title" style={{ marginBottom: '14px' }}>Sipariş Özeti</div>
           <div className={styles.orderRow}>
@@ -102,7 +101,6 @@ export default function OdemePage() {
           </div>
         )}
 
-        {/* iyzico Checkout */}
         {checkoutUrl && (
           <div style={{ maxWidth: '480px' }}>
             <p className="text-secondary fs-sm" style={{ marginBottom: '14px' }}>
@@ -131,5 +129,13 @@ export default function OdemePage() {
         </div>
       </div>
     </DashboardLayout>
+  )
+}
+
+export default function OdemePage() {
+  return (
+    <Suspense fallback={null}>
+      <OdemeInner />
+    </Suspense>
   )
 }
