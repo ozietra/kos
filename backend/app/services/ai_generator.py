@@ -35,7 +35,7 @@ async def call_groq(prompt: str, max_retries=2) -> str:
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": prompt}
                 ],
-                model="llama3-70b-8192",
+                model="llama-3.3-70b-versatile",
                 temperature=0.6,
                 max_tokens=2500,
             )
@@ -202,7 +202,7 @@ LÜTFEN SADECE VE SADECE JSON FORMATINDA YANIT VER. BAŞKA HİÇBİR AÇIKLAMA V
     try:
         response = await client.chat.completions.create(
             messages=[{"role": "user", "content": prompt}],
-            model="llama3-70b-8192",
+            model="llama-3.3-70b-versatile",
             temperature=0.1,
             max_tokens=500,
         )
