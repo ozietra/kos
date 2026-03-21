@@ -249,7 +249,7 @@ export default function BasvuruFormPage() {
             )}
             {step === 4 && (
               <button type="submit" className="btn btn-primary btn-lg" disabled={saving}>
-                {saving ? 'Kaydediliyor...' : '🚀 Başvuruyu Hazırla'}
+                {saving ? 'Kaydediliyor...' : 'Başvuruyu Hazırla'}
               </button>
             )}
           </div>

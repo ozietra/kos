@@ -82,7 +82,7 @@ export default function UretimPage() {
     <DashboardLayout>
       <div className={styles.page}>
         <div className={styles.center}>
-          <div className={styles.iconBig}>{done ? '✅' : started ? '⚙️' : '🚀'}</div>
+          <div className={styles.iconBig}>{done ? '✅' : started ? '⚙️' : '📄'}</div>
           <h1 className={styles.title}>
             {done ? 'Başvuru Dosyası Hazır!' :
              started ? 'Hazırlanıyor...' :
