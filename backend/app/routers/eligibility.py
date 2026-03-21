@@ -80,9 +80,22 @@ async def get_last_eligibility(
     if not check:
         return None
 
+    # Eski veritabanı kayıtlarındaki eksik alanları tolere et
+    eligible_list = []
+    for p in (check.eligible_programs or []):
+        p.setdefault("key_requirements", [])
+        p.setdefault("next_step", "Başvuru adımlarını takip edin.")
+        p.setdefault("application_deadline", None)
+        eligible_list.append(EligibleProgram(**p))
+
+    ineligible_list = []
+    for p in (check.ineligible_programs or []):
+        p.setdefault("could_be_eligible_if", None)
+        ineligible_list.append(IneligibleProgram(**p))
+
     return EligibilityResult(
         business_id=business_id,
-        eligible=[EligibleProgram(**p) for p in (check.eligible_programs or [])],
-        ineligible=[IneligibleProgram(**p) for p in (check.ineligible_programs or [])],
+        eligible=eligible_list,
+        ineligible=ineligible_list,
         warnings=[EligibilityWarning(**w) for w in (check.warnings or [])],
     )

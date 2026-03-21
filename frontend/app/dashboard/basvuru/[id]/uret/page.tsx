@@ -57,10 +57,18 @@ export default function UretimPage() {
 
     es.addEventListener('progress', (e) => {
       const data = JSON.parse(e.data)
-      setProgress(data.percent ?? 0)
-      setStatusLabel(STEPS_LABELS[data.stage] || data.message || 'Devam ediyor...')
+      
+      if (data.error) {
+        es.close()
+        setErrorMsg(data.text || 'Üretim sırasında bir hata oluştu.')
+        setStarted(false)
+        return
+      }
 
-      if (data.percent >= 100 || data.stage === 'done') {
+      setProgress(data.progress ?? 0)
+      setStatusLabel(data.text || 'Devam ediyor...')
+
+      if (data.progress >= 100 || data.done) {
         es.close()
         setDone(true)
         setTimeout(() => {
@@ -70,6 +78,9 @@ export default function UretimPage() {
     })
 
     es.addEventListener('error', () => {
+      if (es.readyState === EventSource.CLOSED) {
+        return // Normal kapanma
+      }
       es.close()
       setErrorMsg('Bağlantı kesildi. Lütfen sayfayı yenileyip tekrar deneyin.')
       setStarted(false)
