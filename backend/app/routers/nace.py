@@ -35,14 +35,20 @@ NACE_LIST = [
 
 @router.post("/suggest", response_model=NaceSuggestResponse)
 async def nace_suggest(data: NaceSuggestRequest):
-    """Kullanıcının sektör açıklamasına göre NACE kodu öner (Gemini ile)"""
     result = await suggest_nace(data.description)
+    alt_codes = []
+    for c in result.get("alternative_codes", []):
+        if isinstance(c, str):
+            alt_codes.append({"code": c, "description": "Alternatif Öneri"})
+        elif isinstance(c, dict) and "code" in c:
+            alt_codes.append(c)
+
     return NaceSuggestResponse(
-        nace_code=result.get("nace_code", ""),
-        nace_description=result.get("nace_description", ""),
-        is_kosgeb_eligible=result.get("is_kosgeb_eligible", False),
-        confidence=result.get("confidence", "low"),
-        alternative_codes=result.get("alternative_codes", []),
+        nace_code=str(result.get("nace_code", "")),
+        nace_description=str(result.get("nace_description", "")),
+        is_kosgeb_eligible=bool(result.get("is_kosgeb_eligible", False)),
+        confidence=str(result.get("confidence", "low")),
+        alternative_codes=alt_codes,
     )
 
 
