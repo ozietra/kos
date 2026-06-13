@@ -3,14 +3,33 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import styles from './page.module.css'
 import NewsletterForm from '@/components/NewsletterForm'
+import { getHomeContent, getPricing, type HomeStat, type PricingPlanPublic } from '@/lib/serverApi'
 
 export const metadata: Metadata = {
   title: 'KOSGEB Hibe Başvurusu Hazırlık Platformu — kosgebhibe.com',
   description:
-    'İşletmenizin uygun olduğu KOSGEB programını bulun, başvuru metinlerinizi dakikalar içinde hazırlayın. Danışman olmadan, 499 ₺\'ye.',
+    'İşletmenizin uygun olduğu KOSGEB programını bulun, başvuru metinlerinizi dakikalar içinde hazırlayın. Danışman olmadan.',
 }
 
-export default function HomePage() {
+// Backend ulaşılamazsa kullanılacak yedek değerler
+const FALLBACK_STATS: HomeStat[] = [
+  { key: 'stat_total_grant', value: '2.45 Milyar ₺', label: '2025 yılında dağıtılan toplam hibe' },
+  { key: 'stat_project_count', value: '1.699', label: 'Desteklenen proje sayısı (2025)' },
+  { key: 'stat_special_limit', value: '1.650.000 ₺', label: 'Kadın/Genç/Engelli girişimcilere hibe limiti' },
+  { key: 'stat_periods', value: '3', label: 'Yılda açılan başvuru dönemi' },
+]
+
+function fmtPrice(p: number, currency: string): string {
+  const n = Number.isInteger(p) ? p.toLocaleString('tr-TR') : p.toLocaleString('tr-TR', { minimumFractionDigits: 2 })
+  return `${n} ${currency === 'TRY' ? '₺' : currency}`
+}
+
+export default async function HomePage() {
+  const [content, pricing] = await Promise.all([getHomeContent(), getPricing()])
+  const heroBadge = content?.hero_badge ?? '2026 Güncel'
+  const stats = content?.stats?.length ? content.stats : FALLBACK_STATS
+  const plans: PricingPlanPublic[] = pricing?.plans ?? []
+
   return (
     <>
       <Header />
@@ -20,7 +39,7 @@ export default function HomePage() {
           <div className="container">
             <div className={styles.heroContent}>
               <div className={styles.heroBadge}>
-                <span className="badge badge-info">2026 Güncel • KOBİGEL Başvurusu: 30 Nisan 2026</span>
+                <span className="badge badge-info">{heroBadge}</span>
               </div>
               <h1 className="hero-title">
                 KOSGEB Hibesine<br />
@@ -51,22 +70,12 @@ export default function HomePage() {
         <section className={styles.statsBand}>
           <div className="container">
             <div className={styles.statsGrid}>
-              <div className={styles.statItem}>
-                <div className="amount">2.45 Milyar ₺</div>
-                <div className={styles.statLabel}>2025 yılında dağıtılan toplam hibe</div>
-              </div>
-              <div className={styles.statItem}>
-                <div className="amount">1.699</div>
-                <div className={styles.statLabel}>Desteklenen proje sayısı (2025)</div>
-              </div>
-              <div className={styles.statItem}>
-                <div className="amount">1.650.000 ₺</div>
-                <div className={styles.statLabel}>Kadın/Genç/Engelli girişimcilere hibe limiti</div>
-              </div>
-              <div className={styles.statItem}>
-                <div className="amount">3</div>
-                <div className={styles.statLabel}>Yılda açılan başvuru dönemi</div>
-              </div>
+              {stats.map((s) => (
+                <div className={styles.statItem} key={s.key}>
+                  <div className="amount">{s.value}</div>
+                  <div className={styles.statLabel}>{s.label}</div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -169,21 +178,50 @@ export default function HomePage() {
                 </a>
               </div>
 
-              {/* Starter */}
-              <div className={`card ${styles.featuredCard}`}>
-                <div className="label">Starter</div>
-                <div className={styles.planPrice}>499 ₺</div>
-                <div className={styles.planDesc}>Tek seferlik, KDV dahil</div>
-                <ul className={styles.featureList}>
-                  <li>✓ Tam başvuru dosyası</li>
-                  <li>✓ PDF çıktısı</li>
-                  <li>✓ Belge kontrol listesi</li>
-                  <li>✓ 30 gün erişim</li>
-                </ul>
-                <a href="/uye-ol?plan=starter" className="btn btn-primary" style={{ width: '100%', marginTop: '20px' }}>
-                  Hemen Başla
-                </a>
-              </div>
+              {/* Ücretli planlar (backend'den dinamik) */}
+              {plans.length > 0 ? (
+                plans.map((plan, i) => (
+                  <div className={`card ${i === 0 ? styles.featuredCard : ''}`} key={plan.code}>
+                    <div className="label">{plan.name}</div>
+                    {plan.is_campaign ? (
+                      <div className={styles.planPrice}>
+                        <span style={{ textDecoration: 'line-through', opacity: 0.5, fontSize: '0.6em', marginRight: 8 }}>
+                          {fmtPrice(plan.price, plan.currency)}
+                        </span>
+                        {fmtPrice(plan.effective_price, plan.currency)}
+                      </div>
+                    ) : (
+                      <div className={styles.planPrice}>{fmtPrice(plan.effective_price, plan.currency)}</div>
+                    )}
+                    <div className={styles.planDesc}>
+                      {plan.is_campaign && plan.campaign_label ? plan.campaign_label : (plan.description || 'Tek seferlik, KDV dahil')}
+                    </div>
+                    <ul className={styles.featureList}>
+                      {plan.features.map((f) => (
+                        <li key={f}>✓ {f}</li>
+                      ))}
+                    </ul>
+                    <a href={`/uye-ol?plan=${plan.code}`} className="btn btn-primary" style={{ width: '100%', marginTop: '20px' }}>
+                      Hemen Başla
+                    </a>
+                  </div>
+                ))
+              ) : (
+                <div className={`card ${styles.featuredCard}`}>
+                  <div className="label">Starter</div>
+                  <div className={styles.planPrice}>499 ₺</div>
+                  <div className={styles.planDesc}>Tek seferlik, KDV dahil</div>
+                  <ul className={styles.featureList}>
+                    <li>✓ Tam başvuru dosyası</li>
+                    <li>✓ Profesyonel PDF çıktısı</li>
+                    <li>✓ Belge kontrol listesi</li>
+                    <li>✓ 30 gün erişim</li>
+                  </ul>
+                  <a href="/uye-ol?plan=starter" className="btn btn-primary" style={{ width: '100%', marginTop: '20px' }}>
+                    Hemen Başla
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </section>

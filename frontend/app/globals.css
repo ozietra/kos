@@ -270,3 +270,31 @@ hr {
   .container  { padding: 0 16px; }
   .card       { padding: 16px; }
 }
+
+/* ── 2026 cila: ölçülü hareket & derinlik (eklemeli, mevcut sınıfları bozmaz) ── */
+.btn-primary {
+  box-shadow: 0 1px 2px rgba(192, 57, 43, .25);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(192, 57, 43, .28);
+}
+.btn-lg:hover { transform: translateY(-1px); }
+
+.card {
+  transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+}
+.card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,.07), 0 10px 28px rgba(0,0,0,.06);
+  border-color: var(--color-border-dark);
+}
+
+/* İstatistik rakamlarını biraz daha belirgin yap */
+.amount { letter-spacing: -0.01em; }
+
+/* Rozet: ince üst vurgu */
+.badge-info { box-shadow: inset 0 0 0 1px rgba(26, 82, 118, .12); }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn, .card, .btn-primary:hover, .card:hover { transition: none; transform: none; }
+}

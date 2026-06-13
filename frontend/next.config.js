@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Next.js 16.2 App Router
+  // Docker üretim imajı .next/standalone kopyaladığı için zorunlu
+  output: 'standalone',
   experimental: {
     // Faster prefetch (Next.js 16.2)
     prefetchInlining: true,

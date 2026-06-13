@@ -47,7 +47,7 @@ export const auth = {
       body: JSON.stringify({ email, password }),
     }),
 
-  me: () => request<{ id: string; email: string; name: string; plan: string }>('/auth/me'),
+  me: () => request<{ id: string; email: string; name: string; plan: string; is_admin: boolean }>('/auth/me'),
 
   forgotPassword: (email: string) =>
     request('/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) }),
@@ -101,6 +101,12 @@ export const applications = {
   getPdfUrl: (id: string) => `${API_BASE}/applications/${id}/pdf`,
 }
 
+// ── Public içerik (kimlik gerektirmez) ──────────────────────────────────────
+export const content = {
+  home: () => request<{ hero_badge: string; stats: any[] }>('/content/home'),
+  pricing: () => request<{ plans: any[] }>('/content/pricing'),
+}
+
 // ── Token helpers ─────────────────────────────────────────────────────────────
 export const tokenHelpers = {
   save: (token: string) => localStorage.setItem('token', token),
@@ -110,8 +116,8 @@ export const tokenHelpers = {
 
 // ── Payments ──────────────────────────────────────────────────────────────────
 export const payments = {
-  checkout: (data: { application_id: string; plan: string }) =>
-    request<{ checkoutFormContent?: string; paymentPageUrl?: string; token?: string }>(
+  checkout: (data: { application_id: string; plan: string; provider?: string }) =>
+    request<{ provider?: string; checkoutFormContent?: string; paymentPageUrl?: string; token?: string; iframe_url?: string }>(
       '/payments/checkout',
       { method: 'POST', body: JSON.stringify(data) }
     ),
@@ -129,4 +135,23 @@ export const admin = {
   adminPayments: (skip = 0, limit = 50) => request<any[]>(`/admin/payments?skip=${skip}&limit=${limit}`),
   updateProgram: (id: string, data: any) =>
     request<any>(`/admin/programs/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+
+  // Program oto-güncelleme önerileri
+  proposals: (status = 'pending') =>
+    request<any[]>(`/admin/programs/proposals?status_filter=${encodeURIComponent(status)}`),
+  approveProposal: (id: string) =>
+    request<any>(`/admin/programs/proposals/${id}/approve`, { method: 'POST' }),
+  rejectProposal: (id: string, note?: string) =>
+    request<any>(`/admin/programs/proposals/${id}/reject`, { method: 'POST', body: JSON.stringify({ note }) }),
+  refreshPrograms: () => request<any>('/admin/programs/refresh', { method: 'POST' }),
+
+  // Site içeriği
+  content: () => request<any[]>('/admin/content'),
+  updateContent: (key: string, data: { value?: string; label?: string }) =>
+    request<any>(`/admin/content/${encodeURIComponent(key)}`, { method: 'PUT', body: JSON.stringify(data) }),
+
+  // Fiyatlandırma
+  pricing: () => request<any[]>('/admin/pricing'),
+  updatePricing: (code: string, data: any) =>
+    request<any>(`/admin/pricing/${encodeURIComponent(code)}`, { method: 'PUT', body: JSON.stringify(data) }),
 }
