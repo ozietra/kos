@@ -152,7 +152,7 @@ def _build_html(ctx: dict) -> str:
             where = html_lib.escape(str(doc.get("where_to_get", "")))
             desc = html_lib.escape(str(doc.get("description", "")))
             lis += (
-                f'<li class="doc-item"><div class="doc-name">☐ {name}</div>'
+                f'<li class="doc-item"><div class="doc-name"><span class="cb"></span>{name}</div>'
                 f'<div class="doc-where">Temin yeri: {where}</div>'
                 + (f'<div class="doc-note">{desc}</div>' if desc else "")
                 + "</li>"
@@ -239,6 +239,7 @@ def _build_html(ctx: dict) -> str:
   .doc-list {{ list-style: none; }}
   .doc-item {{ padding: 9px 12px; border: 1px solid #e2e2e2; border-radius: 3px; margin-bottom: 7px; }}
   .doc-name {{ font-weight: 600; }}
+  .cb {{ display: inline-block; width: 11px; height: 11px; border: 1.3px solid #555; border-radius: 2px; margin-right: 8px; vertical-align: middle; }}
   .doc-where {{ font-size: 9.5pt; color: #666; margin-top: 2px; }}
   .doc-note {{ font-size: 9.5pt; color: #999; }}
 </style>

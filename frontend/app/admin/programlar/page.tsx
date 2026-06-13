@@ -1,13 +1,15 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { admin } from '@/lib/api'
+import { admin, programs as programsApi } from '@/lib/api'
 
 export default function AdminProgramsPage() {
   const [proposals, setProposals] = useState<any[]>([])
+  const [programs, setPrograms] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState('')
+  const [savingId, setSavingId] = useState<string | null>(null)
 
   const load = () => {
     setLoading(true)
@@ -18,7 +20,29 @@ export default function AdminProgramsPage() {
       .finally(() => setLoading(false))
   }
 
-  useEffect(load, [])
+  const loadPrograms = () => programsApi.list().then(setPrograms).catch(() => {})
+
+  useEffect(() => { load(); loadPrograms() }, [])
+
+  const setProg = (id: string, field: string, value: any) =>
+    setPrograms((ps) => ps.map((p) => (p.id === id ? { ...p, [field]: value } : p)))
+
+  const saveProgram = async (p: any) => {
+    setSavingId(p.id)
+    try {
+      await admin.updateProgram(p.id, {
+        application_period_start: p.application_period_start || null,
+        application_period_end: p.application_period_end || null,
+        is_active: p.is_active,
+      })
+      setMsg(`Kaydedildi: ${p.program_name}`)
+      loadPrograms()
+    } catch (e: any) {
+      setMsg(e.message)
+    } finally {
+      setSavingId(null)
+    }
+  }
 
   const refresh = async () => {
     setBusy(true)
@@ -106,6 +130,33 @@ export default function AdminProgramsPage() {
           </div>
         ))
       )}
+
+      {/* ── Mevcut Programlar (doğrudan düzenleme) ── */}
+      <h2 style={{ fontSize: 18, fontWeight: 700, margin: '32px 0 8px' }}>Mevcut Programlar</h2>
+      <p style={{ color: '#6b6a62', fontSize: 14, marginBottom: 16 }}>
+        Hero'daki "son başvuru tarihi" en yakın aktif programdan otomatik gelir. Yanlışsa ilgili programın
+        tarihini buradan düzeltin veya programı pasife alın. Değişiklik birkaç dakikada siteye yansır.
+      </p>
+      {programs.map((p) => (
+        <div key={p.id} style={{ border: '1px solid #e4e3dc', borderRadius: 8, padding: 14, marginBottom: 10, display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 260px', fontWeight: 600, fontSize: 14 }}>{p.program_name}</div>
+          <label style={{ fontSize: 12, color: '#6b6a62' }}>Başlangıç
+            <input type="date" value={p.application_period_start || ''} onChange={(e) => setProg(p.id, 'application_period_start', e.target.value)}
+              style={{ display: 'block', padding: '6px 8px', border: '1px solid #d8d8d8', borderRadius: 6 }} />
+          </label>
+          <label style={{ fontSize: 12, color: '#6b6a62' }}>Son başvuru
+            <input type="date" value={p.application_period_end || ''} onChange={(e) => setProg(p.id, 'application_period_end', e.target.value)}
+              style={{ display: 'block', padding: '6px 8px', border: '1px solid #d8d8d8', borderRadius: 6 }} />
+          </label>
+          <label style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <input type="checkbox" checked={!!p.is_active} onChange={(e) => setProg(p.id, 'is_active', e.target.checked)} /> Aktif
+          </label>
+          <button onClick={() => saveProgram(p)} disabled={savingId === p.id}
+            style={{ background: '#003366', color: '#fff', border: 0, borderRadius: 6, padding: '8px 14px', cursor: 'pointer' }}>
+            {savingId === p.id ? '…' : 'Kaydet'}
+          </button>
+        </div>
+      ))}
     </div>
   )
 }

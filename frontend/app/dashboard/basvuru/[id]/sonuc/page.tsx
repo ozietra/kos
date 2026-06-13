@@ -6,6 +6,7 @@ import DashboardLayout from '@/components/DashboardLayout'
 import { useDashboardAuth } from '@/hooks/useDashboardAuth'
 import { applications } from '@/lib/api'
 import Link from 'next/link'
+import Icon from '@/components/Icon'
 import styles from './page.module.css'
 
 export default function SonucPage() {
@@ -63,7 +64,7 @@ export default function SonucPage() {
             onClick={downloadPdf}
             disabled={downloading}
           >
-            {downloading ? 'İndiriliyor...' : '📄 PDF İndir'}
+            {downloading ? 'İndiriliyor...' : <><Icon name="document" size={18} /> PDF İndir</>}
           </button>
         </div>
 
@@ -91,8 +92,8 @@ export default function SonucPage() {
         {/* Belge listesi */}
         {docs.length > 0 && (
           <div className="card" style={{ marginTop: '28px' }}>
-            <div className="card-title" style={{ marginBottom: '16px' }}>
-              📋 Belge Kontrol Listesi
+            <div className="card-title" style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Icon name="clipboard" size={18} /> Belge Kontrol Listesi
             </div>
             <p className="text-secondary fs-sm" style={{ marginBottom: '16px' }}>
               Aşağıdaki belgeler başvurunuz için gereklidir. Topladıkça işaretleyin.

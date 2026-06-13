@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import DashboardLayout from '@/components/DashboardLayout'
 import { useDashboardAuth } from '@/hooks/useDashboardAuth'
 import { applications } from '@/lib/api'
+import Icon from '@/components/Icon'
 import styles from './page.module.css'
 
 const STEPS_LABELS: Record<string, string> = {
@@ -93,7 +94,9 @@ export default function UretimPage() {
     <DashboardLayout>
       <div className={styles.page}>
         <div className={styles.center}>
-          <div className={styles.iconBig}>{done ? '✅' : started ? '⚙️' : '📄'}</div>
+          <div className={styles.iconBig}>
+            <Icon name={done ? 'checkCircle' : started ? 'gear' : 'document'} size={48} strokeWidth={1.5} />
+          </div>
           <h1 className={styles.title}>
             {done ? 'Başvuru Dosyası Hazır!' :
              started ? 'Hazırlanıyor...' :
@@ -122,7 +125,7 @@ export default function UretimPage() {
 
           {!started && !done && (
             <button className="btn btn-primary btn-lg" style={{ marginTop: '28px' }} onClick={startGeneration}>
-              🚀 Başvuruyu Hazırla
+              <Icon name="spark" size={18} /> Başvuruyu Hazırla
             </button>
           )}
 

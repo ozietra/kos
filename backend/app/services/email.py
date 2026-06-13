@@ -74,14 +74,14 @@ async def send_welcome(email: str, name: str):
     <p>İlk adım olarak ücretsiz <strong>uygunluk testini</strong> yapmanızı öneririz.</p>
     <a href="https://kosgebhibe.com/dashboard" class="btn">Panele Git</a>
     """
-    await _send(email, "kosgebhibe.com'a Hoş Geldiniz 🎉", _layout(body, "Hoş Geldiniz"))
+    await _send(email, "kosgebhibe.com'a Hoş Geldiniz", _layout(body, "Hoş Geldiniz"))
 
 
 async def send_payment_confirmation(email: str, name: str, plan: str, amount: float):
     """Başarılı ödeme onayı."""
     plan_label = "Starter" if plan == "starter" else "Pro"
     body = f"""
-    <h2>Ödeme Onaylandı ✓</h2>
+    <h2>Ödeme Onaylandı</h2>
     <p>Sayın {name}, ödemeniz başarıyla alındı.</p>
     <div class="amount">{int(amount):,} ₺</div>
     <p><strong>Plan:</strong> {plan_label}</p>
@@ -111,13 +111,13 @@ async def send_password_reset(email: str, name: str, reset_url: str):
 async def send_new_period_notification(email: str, name: str, program_name: str):
     """Yeni dönem bildirimi (aboneler)."""
     body = f"""
-    <h2>📢 Yeni Başvuru Dönemi Açıldı!</h2>
-    <p>Merhaba {name}, {program_name} için yeni başvuru dönemi açıldı!</p>
+    <h2>Yeni Başvuru Dönemi Açıldı</h2>
+    <p>Merhaba {name}, {program_name} için yeni başvuru dönemi açıldı.</p>
     <p>Başvurunuzu şimdi hazırlamak için panele gidin.</p>
     <a href="https://kosgebhibe.com/kosgeb-programlari" class="btn">Programlara Bak</a>
     """
     await _send(
         email,
-        f"📢 {program_name} Başvuruları Açıldı!",
+        f"{program_name} Başvuruları Açıldı",
         _layout(body, "Yeni Dönem Bildirimi"),
     )
