@@ -1,0 +1,88 @@
+name: kosgebhibe
+
+# Windows sunucu üretim ortamı.
+# Cloudflare Tunnel ile yayınlanır — açık port (80/443) GEREKMEZ.
+# Tüm gizli değerler .env dosyasından okunur (bkz. .env.example).
+
+services:
+  # ─── PostgreSQL (yerel, sunucuda) ──────────────────────────────────────────
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kosgebhibe
+      POSTGRES_USER: kosgebhibe
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kosgebhibe123}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kosgebhibe"]
+      interval: 10s
+      retries: 5
+
+  # ─── Redis (yerel, sunucuda) ───────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+
+  # ─── Backend (FastAPI) ─────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://kosgebhibe:${POSTGRES_PASSWORD:-kosgebhibe123}@postgres:5432/kosgebhibe
+      REDIS_URL: redis://redis:6379
+      FRONTEND_URL: https://kosgebhibe.com
+      PDF_DIR: /app/pdfs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - pdf_storage:/app/pdfs
+
+  # ─── Frontend (Next.js) ────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: https://kosgebhibe.com
+      INTERNAL_API_URL: http://backend:8000
+    depends_on:
+      - backend
+
+  # ─── Nginx (iç yönlendirici — /api→backend, /→frontend) ────────────────────
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
+
+  # ─── Cloudflare Tunnel (domain + SSL, açık port gerektirmez) ───────────────
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${CF_TUNNEL_TOKEN}
+    depends_on:
+      - nginx
+
+volumes:
+  postgres_data:
+  redis_data:
+  pdf_storage:
