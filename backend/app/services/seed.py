@@ -4,7 +4,8 @@ KOSGEB Program seed verisi — Güncel KOSGEB programları (2024-2026)
 from datetime import date
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.models import KosgebProgram
+from app.models import KosgebProgram, User, SiteContent, PricingPlan
+from app.config import settings
 
 
 PROGRAMS_SEED = [
@@ -204,3 +205,60 @@ async def seed_programs(db: AsyncSession) -> None:
 
     await db.commit()
     print("✓ KOSGEB program seed verisi yüklendi.")
+
+
+SITE_CONTENT_SEED = [
+    {"key": "hero_badge_override", "label": "Hero rozeti (boşsa otomatik tarihten üretilir)", "value": "", "group": "hero", "sort_order": 0},
+    {"key": "stat_total_grant", "label": "2025 yılında dağıtılan toplam hibe", "value": "2.45 Milyar ₺", "group": "stats", "sort_order": 1},
+    {"key": "stat_project_count", "label": "Desteklenen proje sayısı (2025)", "value": "1.699", "group": "stats", "sort_order": 2},
+    {"key": "stat_special_limit", "label": "Kadın/Genç/Engelli girişimcilere hibe limiti", "value": "1.650.000 ₺", "group": "stats", "sort_order": 3},
+    {"key": "stat_periods", "label": "Yılda açılan başvuru dönemi", "value": "3", "group": "stats", "sort_order": 4},
+]
+
+
+async def seed_site_content(db: AsyncSession) -> None:
+    """Site içeriği seed — sadece yoksa ekle."""
+    for item in SITE_CONTENT_SEED:
+        existing = await db.execute(select(SiteContent).where(SiteContent.key == item["key"]))
+        if not existing.scalar_one_or_none():
+            db.add(SiteContent(**item))
+    await db.commit()
+
+
+PRICING_SEED = [
+    {
+        "code": "starter", "name": "Starter", "description": "Tek seferlik, KDV dahil",
+        "price": 49900, "currency": "TRY", "sort_order": 1,
+        "features": ["Tam başvuru dosyası", "Profesyonel PDF çıktısı", "Belge kontrol listesi", "30 gün erişim"],
+    },
+    {
+        "code": "pro", "name": "Pro", "description": "Çoklu başvuru + öncelikli destek",
+        "price": 99900, "currency": "TRY", "sort_order": 2,
+        "features": ["Sınırsız başvuru dosyası", "Profesyonel PDF çıktısı", "Belge kontrol listesi", "90 gün erişim", "Öncelikli destek"],
+    },
+]
+
+
+async def seed_pricing_plans(db: AsyncSession) -> None:
+    """Fiyat planı seed — sadece yoksa ekle."""
+    for item in PRICING_SEED:
+        existing = await db.execute(select(PricingPlan).where(PricingPlan.code == item["code"]))
+        if not existing.scalar_one_or_none():
+            db.add(PricingPlan(**item))
+    await db.commit()
+
+
+async def bootstrap_admin(db: AsyncSession) -> None:
+    """
+    ADMIN_EMAIL ayarlıysa, o e-postaya sahip MEVCUT kullanıcıyı admin yapar.
+    Güvenli: yoksa hiçbir şey yapmaz, varsayılan admin oluşturmaz. İdempotent.
+    """
+    email = (settings.ADMIN_EMAIL or "").strip().lower()
+    if not email:
+        return
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+    if user and not user.is_admin:
+        user.is_admin = True
+        await db.commit()
+        print(f"✓ Admin yetkisi verildi: {email}")

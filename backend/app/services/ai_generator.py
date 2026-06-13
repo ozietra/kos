@@ -4,25 +4,38 @@ Kademeli üretim (Chunking) ve %90 Başarı (Self-Correction) filtreli
 """
 import os
 import asyncio
+from datetime import date
 from typing import AsyncGenerator
 from groq import AsyncGroq
 from app.config import settings
 
 client = AsyncGroq(api_key=settings.GROQ_API_KEY)
 
-# ─── SİSTEM PROMPTLARI (Mart 2026 KOSGEB Standartları) ─────────────────────────
+# ─── SİSTEM PROMPTU (Dinamik tarih) ──────────────────────────────────────────
 
-SYSTEM_PROMPT = """Sen üst düzey bir KOSGEB Proje Değerlendirme Uzmanı ve Danışmanısın.
-Mart 2026 itibarıyla KOSGEB'in beklentileri:
-- Gerçekçi, ölçülebilir ve somut hedefler (Afaki rakamlar reddediliyor).
-- Dijital dönüşüm, yeşil enerji ve yerli üretim projelerine tam destek.
-- Şişirilmiş bütçeler onay almıyor, her talep mantıklı bir "Neden?" ile açıklanmalı.
+_TR_MONTHS = ["", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+              "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
 
-KURALLAR:
-- "Tabii ki", "Kesinlikle", "Anlaşıldı", "İşte metniniz" gibi yapay zeka kalıplarını ASLA KULLANMA. Doğrudan metni ver.
-- Mutevazı ama vizyoner bir dil kullan. Bürokratik, soğuk ama akıcı bir Türkçe tercih et.
-- KESİNLİKLE SADECE TÜRKÇE KELİMELER KULLAN. HİÇBİR YABANCI DİL VEYA FARKLI ALFABE (örn. Vietnamca, Çince, İngilizce) KULLANMA.
-- Onay şansını %90'ın üzerine çıkaracak "Gerekçe-Sonuç" mantığıyla yaz.
+
+def _current_period() -> str:
+    t = date.today()
+    return f"{_TR_MONTHS[t.month]} {t.year}"
+
+
+SYSTEM_PROMPT = f"""Sen, KOBİ'ler için KOSGEB destek başvuru dosyaları hazırlayan, alanında uzman, deneyimli bir proje danışmanısın. {_current_period()} itibarıyla güncel KOSGEB değerlendirme kriterlerine hâkimsin.
+
+KOSGEB değerlendirme jürisinin beklentileri:
+- Gerçekçi, ölçülebilir, sayısal verilerle desteklenmiş somut hedefler. Afaki/abartılı rakamlar elenir.
+- Dijital dönüşüm, yeşil/temiz enerji, yerli üretim ve ihracat odaklı projelere öncelik.
+- Her bütçe kalemi ve her talep, mantıklı bir gerekçeyle ("neden gerekli, neye yarayacak, geri dönüşü ne") açıklanmalı.
+- Yatırımın istihdama, üretime ve ülke ekonomisine katkısı net ortaya konmalı.
+
+YAZIM KURALLARI:
+- Doğrudan dosya metnini yaz. "Tabii ki", "Kesinlikle", "Anlaşıldı", "İşte metniniz", "Umarım yardımcı olur" gibi sohbet/asistan kalıplarını ASLA kullanma.
+- Profesyonel bir danışmanın ağzından, resmi ama akıcı, ikna edici ve özgüvenli bir Türkçe kullan.
+- SADECE TÜRKÇE yaz. Hiçbir yabancı dil kelimesi veya farklı alfabe (Çince, Vietnamca vb.) kullanma.
+- Hiçbir platform, marka, web sitesi veya yazılım adı geçirme. Metin, danışmanın işletme adına bizzat hazırladığı bir dosya gibi olmalı.
+- "Gerekçe → Sonuç" mantığıyla, jüriyi ikna edecek ciddiyette yaz.
 """
 
 # ─── YARDIMCI FONKSİYONLAR ──────────────────────────────────────────────────
@@ -59,7 +72,7 @@ async def evaluate_and_improve(text: str, context_prompt: str) -> str:
     eval_prompt = f"""Aşağıdaki metin bir KOSGEB başvuru dokümanı için yazıldı.
 İlgili Bağlam/Görev: {context_prompt}
 
-Değerlendirme Kriterleri (Mart 2026 Standartları):
+Değerlendirme Kriterleri (güncel KOSGEB standartları):
 1. Afaki, ölçülemez, soyut ifadeler var mı?
 2. Bütçe, istihdam veya pazar hedefleri mantıklı ve destekli mi?
 3. Yapay zeka kalıpları (Tabii ki, Kesinlikle vb.) kullanılmış mı?
@@ -211,12 +224,42 @@ LÜTFEN SADECE VE SADECE JSON FORMATINDA YANIT VER. BAŞKA HİÇBİR AÇIKLAMA V
         import json
         if text.startswith("```json"):
             text = text.replace("```json", "").replace("```", "").strip()
-        return json.loads(text)
-    except Exception as e:
+        result = json.loads(text)
+    except Exception:
         return {
-            "nace_code": "00.00",
-            "nace_description": f"Sorgu hatası: {str(e)[:50]}",
+            "nace_code": "",
+            "nace_description": "Sektör açıklamanızı biraz daha detaylandırıp tekrar deneyin.",
             "is_kosgeb_eligible": False,
             "confidence": "low",
-            "alternative_codes": []
+            "alternative_codes": [],
         }
+
+    # ── Resmi NACE listesiyle doğrula (halüsinasyon kodları ele) ──
+    from app.utils.nace_list import normalize_nace
+
+    main = normalize_nace(str(result.get("nace_code", "")))
+    alts_raw = result.get("alternative_codes", []) or []
+    valid_alts = []
+    for c in alts_raw:
+        code_str = c.get("code") if isinstance(c, dict) else c
+        n = normalize_nace(str(code_str or ""))
+        if n:
+            valid_alts.append(n)
+
+    # Ana kod geçersizse, ilk geçerli alternatife düş; o da yoksa düşük güven
+    if not main:
+        if valid_alts:
+            main = valid_alts.pop(0)
+            result["confidence"] = "low"
+        else:
+            return {
+                "nace_code": "",
+                "nace_description": "Önerilen kod doğrulanamadı. Lütfen sektörünüzü daha açık tarif edin.",
+                "is_kosgeb_eligible": False,
+                "confidence": "low",
+                "alternative_codes": [],
+            }
+
+    result["nace_code"] = main
+    result["alternative_codes"] = valid_alts
+    return result

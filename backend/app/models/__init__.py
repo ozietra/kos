@@ -20,6 +20,7 @@ class User(Base):
     plan: Mapped[str] = mapped_column(String(50), default="free")
     credits: Mapped[int] = mapped_column(Integer, default=0)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false", nullable=False)
     reset_token: Mapped[str | None] = mapped_column(String(255))
     reset_token_expires: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -92,6 +93,7 @@ class Application(Base):
     budget_breakdown: Mapped[dict | None] = mapped_column(JSONB)
     document_checklist: Mapped[dict | None] = mapped_column(JSONB)
     pdf_url: Mapped[str | None] = mapped_column(String(500))
+    payment_status: Mapped[str] = mapped_column(String(20), default="unpaid")  # unpaid | paid
     generation_progress: Mapped[int] = mapped_column(Integer, default=0)
     generation_status_text: Mapped[str | None] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -140,6 +142,82 @@ class KosgebProgram(Base):
     )
 
 
+class SiteContent(Base):
+    """Düzenlenebilir site içeriği (hero rozeti override, istatistik değerleri)."""
+    __tablename__ = "site_content"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    key: Mapped[str] = mapped_column(String(100), unique=True, index=True, nullable=False)
+    label: Mapped[str | None] = mapped_column(String(255))
+    value: Mapped[str | None] = mapped_column(Text)
+    group: Mapped[str] = mapped_column(String(50), default="stats")  # stats | hero
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class ProgramFetchLog(Base):
+    """KOSGEB sitesinden her çekme denemesinin denetim kaydı."""
+    __tablename__ = "program_fetch_logs"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    source_url: Mapped[str | None] = mapped_column(String(500))
+    status: Mapped[str] = mapped_column(String(20))  # success|fetch_failed|parse_failed|no_change
+    http_status: Mapped[int | None] = mapped_column(Integer)
+    raw_text: Mapped[str | None] = mapped_column(Text)
+    error: Mapped[str | None] = mapped_column(Text)
+    proposals_created: Mapped[int] = mapped_column(Integer, default=0)
+    triggered_by: Mapped[str | None] = mapped_column(String(40))  # schedule | admin:<id>
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class ProgramUpdateProposal(Base):
+    """Admin onayı bekleyen program değişikliği. Onaylanmadan canlıya yansımaz."""
+    __tablename__ = "program_update_proposals"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    program_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("kosgeb_programs.id", ondelete="SET NULL")
+    )
+    program_code: Mapped[str | None] = mapped_column(String(50))
+    change_type: Mapped[str] = mapped_column(String(20))  # create | update | deactivate
+    proposed_data: Mapped[dict | None] = mapped_column(JSONB)
+    current_data: Mapped[dict | None] = mapped_column(JSONB)
+    diff_summary: Mapped[dict | None] = mapped_column(JSONB)  # [{field, old, new}]
+    source_url: Mapped[str | None] = mapped_column(String(500))
+    raw_excerpt: Mapped[str | None] = mapped_column(Text)
+    confidence: Mapped[str | None] = mapped_column(String(10))
+    status: Mapped[str] = mapped_column(String(20), default="pending")  # pending|approved|rejected|superseded
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"))
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    review_note: Mapped[str | None] = mapped_column(Text)
+    fetch_log_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("program_fetch_logs.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class PricingPlan(Base):
+    """Admin'den düzenlenebilir fiyat planı + kampanya/indirim."""
+    __tablename__ = "pricing_plans"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    code: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)  # starter, pro
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[str | None] = mapped_column(String(255))
+    price: Mapped[int] = mapped_column(Integer, nullable=False)  # kuruş cinsinden
+    currency: Mapped[str] = mapped_column(String(8), default="TRY")
+    campaign_price: Mapped[int | None] = mapped_column(Integer)  # kuruş; aktifse geçerli fiyat
+    campaign_label: Mapped[str | None] = mapped_column(String(100))
+    campaign_start: Mapped[date | None] = mapped_column(Date)
+    campaign_end: Mapped[date | None] = mapped_column(Date)
+    features: Mapped[list[str] | None] = mapped_column(ARRAY(String))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
 class Payment(Base):
     __tablename__ = "payments"
 
@@ -147,9 +225,14 @@ class Payment(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"))
     application_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("applications.id"))
     amount: Mapped[int | None] = mapped_column(Integer)  # kuruş cinsinden
+    currency: Mapped[str] = mapped_column(String(8), default="TRY")
+    plan: Mapped[str | None] = mapped_column(String(50))  # starter, pro
     product_type: Mapped[str | None] = mapped_column(String(50))  # starter, pro, subscription
+    provider: Mapped[str | None] = mapped_column(String(20))  # iyzico | paytr
+    provider_reference: Mapped[str | None] = mapped_column(String(255))  # token / merchant_oid
     iyzico_payment_id: Mapped[str | None] = mapped_column(String(255))
     status: Mapped[str] = mapped_column(String(50), default="pending")
+    paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     user: Mapped["User"] = relationship(back_populates="payments")

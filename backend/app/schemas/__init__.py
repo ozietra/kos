@@ -36,6 +36,7 @@ class UserResponse(BaseModel):
     phone: str | None
     plan: str
     credits: int
+    is_admin: bool = False
     created_at: datetime
 
     model_config = {"from_attributes": True}
@@ -238,12 +239,13 @@ class ErrorResponse(BaseModel):
 class CheckoutRequest(BaseModel):
     application_id: uuid.UUID
     plan: str = "starter"   # starter | pro
+    provider: str = "iyzico"  # iyzico | paytr
 
-    @field_validator("plan")
+    @field_validator("provider")
     @classmethod
-    def valid_plan(cls, v: str) -> str:
-        if v not in ("starter", "pro"):
-            raise ValueError("Geçersiz plan.")
+    def valid_provider(cls, v: str) -> str:
+        if v not in ("iyzico", "paytr"):
+            raise ValueError("Geçersiz ödeme sağlayıcısı.")
         return v
 
 

@@ -3,23 +3,33 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import engine, Base
-from app.routers import auth, businesses, eligibility, nace, programs, applications, payments
-from app.services.seed import seed_programs
+from app.routers import auth, businesses, eligibility, nace, programs, applications, payments, admin, content
+from app.services.seed import seed_programs, bootstrap_admin, seed_site_content, seed_pricing_plans
+from app.utils.migrations import run_lightweight_migrations
 from app.database import AsyncSessionLocal
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: tabloları oluştur + seed
+    # Startup: tabloları oluştur + eksik kolonları ekle + seed
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        await run_lightweight_migrations(conn)
 
     async with AsyncSessionLocal() as db:
         await seed_programs(db)
+        await seed_site_content(db)
+        await seed_pricing_plans(db)
+        await bootstrap_admin(db)
+
+    # KOSGEB program oto-güncelleme zamanlayıcısı
+    from app.services.scheduler import start_scheduler, stop_scheduler
+    start_scheduler()
 
     yield
 
     # Shutdown
+    stop_scheduler()
     await engine.dispose()
 
 
@@ -48,6 +58,9 @@ app.include_router(eligibility.router)
 app.include_router(nace.router)
 app.include_router(programs.router)
 app.include_router(applications.router)
+app.include_router(payments.router)
+app.include_router(admin.router)
+app.include_router(content.router)
 
 
 @app.get("/api/health")

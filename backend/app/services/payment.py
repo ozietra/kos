@@ -46,6 +46,8 @@ async def create_checkout_form(
     user_email: str,
     user_name: str,
     plan: str,             # "starter" | "pro"
+    plan_name: str,
+    price_tl: float,       # geçerli fiyat (kampanya dahil), TL
     application_id: str,
     ip_address: str = "85.34.78.112",
 ) -> dict:
@@ -55,7 +57,7 @@ async def create_checkout_form(
     """
     api_key    = settings.IYZICO_API_KEY
     secret_key = settings.IYZICO_SECRET_KEY
-    price      = "499.00" if plan == "starter" else "999.00"
+    price      = f"{price_tl:.2f}"
 
     payload = {
         "locale": "tr",
@@ -94,7 +96,7 @@ async def create_checkout_form(
         "basketItems": [
             {
                 "id": plan,
-                "name": f"kosgebhibe.com {plan.capitalize()} Planı",
+                "name": plan_name,
                 "category1": "Dijital Hizmet",
                 "itemType": "VIRTUAL",
                 "price": price,

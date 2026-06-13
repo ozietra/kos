@@ -251,7 +251,17 @@ async def stream_progress(
 
             # 6. PDF
             yield _sse_msg({"progress": 95, "text": "PDF hazırlanıyor..."})
-            pdf_url = await generate_pdf(app, inputs_dict.get("business_name", ""), docs)
+            pdf_url = await generate_pdf(
+                app,
+                inputs_dict.get("business_name", ""),
+                docs,
+                meta={
+                    "nace_code": inputs_dict.get("nace_code"),
+                    "nace_description": inputs_dict.get("nace_description"),
+                    "city": inputs_dict.get("city"),
+                    "project_title": inputs_dict.get("project_title") or app.project_title,
+                },
+            )
             app.pdf_url = pdf_url
             app.status = "completed"
             app.generation_progress = 100

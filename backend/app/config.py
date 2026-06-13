@@ -25,6 +25,15 @@ class Settings(BaseSettings):
     IYZICO_SANDBOX: bool = True  # False = production
     IYZICO_BASE_URL: str = "https://sandbox-api.iyzipay.com"
 
+    # PayTR
+    PAYTR_MERCHANT_ID: str = ""
+    PAYTR_MERCHANT_KEY: str = ""
+    PAYTR_MERCHANT_SALT: str = ""
+    PAYTR_SANDBOX: bool = True
+
+    # Varsayılan ödeme sağlayıcısı: paytr | iyzico
+    DEFAULT_PAYMENT_PROVIDER: str = "iyzico"
+
     # Email (Postal SMTP)
     SMTP_HOST: str = "localhost"
     SMTP_PORT: int = 587
@@ -43,6 +52,14 @@ class Settings(BaseSettings):
 
     # Encryption key for sensitive fields (AES-256)
     ENCRYPTION_KEY: str = "change-me-32-bytes-encryption!!!"
+
+    # İlk admin: bu e-postaya sahip mevcut kullanıcı başlangıçta admin yapılır
+    ADMIN_EMAIL: str = ""
+
+    # KOSGEB program oto-güncelleme
+    KOSGEB_SCRAPE_ENABLED: bool = True
+    KOSGEB_SCRAPE_CRON_DAY: str = "mon"   # APScheduler day_of_week
+    KOSGEB_SCRAPE_CRON_HOUR: int = 4
 
     class Config:
         env_file = ".env"
