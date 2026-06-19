@@ -13,6 +13,20 @@ export const metadata: Metadata = {
 // Faz 5'te CMS/MDX ile gerçek makaleler eklenecek
 const POSTS = [
   {
+    slug: 'kosgeb-girisimcilik-egitimi-zorunlu-mu',
+    title: 'KOSGEB Uygulamalı Girişimcilik Eğitimi Zorunlu mu? (Sertifika)',
+    excerpt: 'Girişimci Destek Programı için eğitim sertifikası gerekli mi? Eğitim nereden alınır, ücretli mi?',
+    category: 'Teknik Rehber',
+    readMin: 5,
+  },
+  {
+    slug: 'kosgeb-ihracat-kuresel-rekabetcilik',
+    title: 'İhracat ve Küresel Rekabetçilik için KOSGEB Destekleri',
+    excerpt: 'İhracata açılmak isteyen işletmeler için KOSGEB destekleri, kapsadığı giderler ve kimler için uygun olduğu.',
+    category: 'Program Analizi',
+    readMin: 6,
+  },
+  {
     slug: 'kosgeb-geri-odemeli-destek-faizsiz-kredi',
     title: 'KOSGEB Geri Ödemeli Destek ve Faizsiz Kredi Nedir?',
     excerpt: 'Hibe mi kredi mi? Geri ödemesiz, geri ödemeli (faizsiz) ve karma destek yapıları arasındaki farklar.',

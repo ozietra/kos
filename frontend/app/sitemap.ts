@@ -29,6 +29,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Yayında olan blog makaleleri (blog/[slug]/page.tsx içindeki CONTENT ile birebir)
   const blogSlugs = [
+    'kosgeb-girisimcilik-egitimi-zorunlu-mu',
+    'kosgeb-ihracat-kuresel-rekabetcilik',
     'kosgeb-geri-odemeli-destek-faizsiz-kredi',
     'vergi-sgk-borcu-kosgeb-basvurusu',
     'kosgeb-is-plani-nasil-yazilir',

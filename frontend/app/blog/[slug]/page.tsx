@@ -16,6 +16,90 @@ const CONTENT: Record<string, {
   faq?: { q: string; a: string }[]
 }> = {
 
+  'kosgeb-girisimcilik-egitimi-zorunlu-mu': {
+    title: 'KOSGEB Uygulamalı Girişimcilik Eğitimi Zorunlu mu? (Sertifika)',
+    description: 'Girişimci Destek Programı için Uygulamalı Girişimcilik Eğitimi sertifikası gerekli mi? Eğitim nereden alınır, ücretli mi, nasıl başvurulur?',
+    category: 'Teknik Rehber',
+    readMin: 5,
+    dateStr: 'Haziran 2026',
+    content: `
+## Eğitim Sertifikası Ne Zaman Gerekir?
+
+KOSGEB'in **Girişimci Destek Programı** kapsamındaki bazı desteklerde, başvuru için **Uygulamalı Girişimcilik Eğitimi** sertifikası istenebilir. Bu eğitim, yeni girişimcilere iş kurma, iş planı hazırlama ve temel işletme yönetimi konularında hazırlık sağlar. Mevcut işletmelere yönelik bazı programlarda ise bu sertifika gerekmez; bu yüzden başvurduğunuz programın güncel Uygulama Esaslarını kontrol etmek önemlidir.
+
+## Eğitim Nereden Alınır?
+
+Uygulamalı Girişimcilik Eğitimleri; KOSGEB'in onayladığı kurumlar, üniversiteler, belediyeler ve çeşitli kuruluşlar tarafından düzenlenir. Eğitimler genellikle **ücretsiz** veya çok düşük maliyetlidir ve hem yüz yüze hem de uzaktan formatlarda açılabilir.
+
+## Eğitimin İçeriği
+
+- Girişimcilik ve iş fikri geliştirme
+- İş planı hazırlama
+- Temel finansal okuryazarlık ve bütçeleme
+- Pazar ve müşteri analizi
+
+Eğitimi tamamlayanlar, başvurularda kullanabilecekleri bir **katılım/sertifika belgesi** alır.
+
+## Adımlar
+
+1. Başvuracağınız programın eğitim sertifikası isteyip istemediğini kontrol edin.
+2. Gerekiyorsa açık bir Uygulamalı Girişimcilik Eğitimi bulup kaydolun.
+3. Eğitimi tamamlayıp sertifikanızı alın.
+4. Sertifikayı başvuru dosyanıza ekleyin.
+
+---
+
+Sertifika gerekliliği programa göre değişir; güncel ve kesin bilgi için **kosgeb.gov.tr** ve ilgili programın Uygulama Esaslarını esas alın.
+`,
+    faq: [
+      { q: 'KOSGEB girişimcilik eğitimi ücretli mi?', a: 'Uygulamalı Girişimcilik Eğitimleri genellikle ücretsiz veya çok düşük maliyetlidir. KOSGEB onaylı kurumlar, üniversiteler ve belediyeler tarafından düzenlenir.' },
+      { q: 'Her KOSGEB başvurusu için eğitim sertifikası gerekir mi?', a: 'Hayır. Sertifika genellikle Girişimci Destek Programı kapsamındaki bazı desteklerde istenir; mevcut işletmelere yönelik birçok programda gerekmez. Programın Uygulama Esaslarını kontrol edin.' },
+      { q: 'Eğitim sertifikasını nereden alabilirim?', a: 'KOSGEB onaylı kurumların, üniversitelerin ve belediyelerin açtığı Uygulamalı Girişimcilik Eğitimlerine katılarak alabilirsiniz. Eğitimler yüz yüze veya uzaktan olabilir.' },
+    ],
+  },
+
+  'kosgeb-ihracat-kuresel-rekabetcilik': {
+    title: 'İhracat ve Küresel Rekabetçilik için KOSGEB Destekleri',
+    description: 'İhracata açılmak isteyen KOBİ firmaları için KOSGEB destekleri. Küresel Rekabetçilik Destek Programı kimler için uygun, hangi giderleri kapsar?',
+    category: 'Program Analizi',
+    readMin: 6,
+    dateStr: 'Haziran 2026',
+    content: `
+## İhracatçı KOBİ'ye KOSGEB Desteği
+
+Dış pazarlara açılmak isteyen KOBİ'ler için KOSGEB, uluslararası rekabet gücünü artırmaya yönelik destekler sunar. Bunların başında **Küresel Rekabetçilik (Uluslararası Kuluçka/İhracat odaklı) Destek Programı** gelir. Amaç; işletmenin ürün, süreç ve pazarlama kapasitesini geliştirerek ihracata hazır hale getirmektir.
+
+## Tipik Olarak Desteklenen Alanlar
+
+- Yurt dışı pazar araştırması ve pazara giriş faaliyetleri
+- Uluslararası belgelendirme, test ve kalite süreçleri
+- Tanıtım, markalaşma ve dijital pazarlama
+- Danışmanlık ve eğitim hizmetleri
+
+> Desteklenen kalemler ve oranlar programın güncel Uygulama Esaslarına göre değişir.
+
+## Kimler İçin Uygun?
+
+- İhracata yeni başlayan veya ihracatını artırmak isteyen imalat/teknoloji KOBİ'leri
+- Ürünü uluslararası pazara uygun, büyüme potansiyeli olan işletmeler
+
+## Güçlü Başvuru İçin
+
+- Hedef pazarınızı ve oraya nasıl gireceğinizi **somut** anlatın (hangi ülke, hangi kanal, hangi müşteri).
+- İhracat hedeflerinizi sayısal ve gerçekçi koyun (ör. ilk yıl X ülkeye giriş, Y ciro).
+- Yatırımın ihracata ve ülke ekonomisine katkısını net ortaya koyun.
+
+---
+
+İhracat odaklı programların güncel koşulları için **kosgeb.gov.tr**'yi esas alın. İşletmenizin hangi programa uygun olduğunu görmek için ücretsiz uygunluk testimizi kullanabilirsiniz.
+`,
+    faq: [
+      { q: 'İhracat yapmak isteyen KOBİ KOSGEB üzerinden nasıl destek alır?', a: 'KOSGEB Küresel Rekabetçilik ve ilgili programları; pazar araştırması, belgelendirme, tanıtım ve danışmanlık gibi ihracata hazırlık giderlerini destekleyebilir. Uygunluk ve kapsam programın Uygulama Esaslarına göre belirlenir.' },
+      { q: 'Küresel Rekabetçilik Destek Programı kimler için uygun?', a: 'Genellikle ihracata yeni başlayan veya ihracatını artırmak isteyen, ürünü uluslararası pazara uygun imalat/teknoloji firmaları için uygundur.' },
+      { q: 'İhracat desteği başvurusunda neye dikkat etmeliyim?', a: 'Hedef pazarı ve pazara giriş stratejinizi somut anlatın, ihracat hedeflerinizi gerçekçi ve sayısal koyun, yatırımın ihracata katkısını net gösterin.' },
+    ],
+  },
+
   'kosgeb-geri-odemeli-destek-faizsiz-kredi': {
     title: 'KOSGEB Geri Ödemeli Destek ve Faizsiz Kredi Nedir?',
     description: 'KOSGEB destekleri hibe mi kredi mi? Geri ödemesiz hibe, geri ödemeli (faizsiz/düşük faizli) destek ve karma yapı arasındaki farklar.',
@@ -922,7 +1006,7 @@ Her program yılda 3 dönem açılır:
 
 ## Özet: Karar Ağacı
 
-İşletме yaşı < 3 yıl **→** İş Geliştirme Desteği
+İşletme yaşı < 3 yıl **→** İş Geliştirme Desteği
 İşletme yaşı ≥ 3 yıl + yenilikçi proje **→** KOBİGEL
 Büyük finansman ihtiyacı var **→** Kapasite Geliştirme
 Yeni kurulan + küçük ölçekli **→** Girişimcilik Desteği
@@ -931,6 +1015,11 @@ Yeni kurulan + küçük ölçekli **→** Girişimcilik Desteği
 
 **kosgebhibe.com ile 2 dakikada uygunluk testi yapın ve en uygun KOSGEB programını belirleyin. Başvuru dosyanızı 499 ₺'ye hazırlayın.**
     `,
+    faq: [
+      { q: 'İşletmeme en uygun KOSGEB programını nasıl seçerim?', a: 'İşletme yaşınız, sektörünüz (NACE) ve yatırım amacınız belirleyicidir. Yeni kurulan işletmeler için Girişimci Destek Programı, yenilikçi projeler için KOBİGEL, büyük yatırım finansmanı için Kapasite Geliştirme öne çıkar. Ücretsiz uygunluk testi ile hızlıca belirleyebilirsiniz.' },
+      { q: 'Aynı anda birden fazla KOSGEB programına başvurabilir miyim?', a: 'Her programın kendi uygulama esasları vardır; aynı yatırım için mükerrer destek genelde mümkün değildir. Farklı amaçlı yatırımlar için ayrı programlar değerlendirilebilir, ancak koşulları kontrol edin.' },
+      { q: 'Bir dönemi kaçırırsam ne olur?', a: 'KOSGEB yıl içinde birden fazla başvuru dönemi açar; bir sonraki dönemi bekleyebilirsiniz. Ancak dönemler arasında program koşulları ve limitler değişebilir.' },
+    ],
   },
 
 }
