@@ -27,8 +27,10 @@ export default function AdminContentPage() {
   return (
     <div>
       <p style={{ color: '#6b6a62', fontSize: 14, marginBottom: 16 }}>
-        Ana sayfa istatistikleri ve hero rozeti. Hero rozetini boş bırakırsanız, en yakın program son başvuru tarihinden otomatik üretilir.
-        Değişiklikler birkaç dakika içinde siteye yansır.
+        Ana sayfa istatistikleri, hero rozeti ve <strong>Google Analytics / Search Console</strong> kimlikleri.
+        Hero rozetini boş bırakırsanız en yakın program son başvuru tarihinden otomatik üretilir.
+        Analytics ölçüm kimliğini (G-…) veya Search Console doğrulama kodunu girip kaydederseniz site otomatik olarak bağlanır.
+        Değişiklikler kısa süre içinde siteye yansır (gerekirse tarayıcı önbelleğini yenileyin).
       </p>
       {msg && <div style={{ background: '#f4f3ee', padding: 10, borderRadius: 6, marginBottom: 16, fontSize: 14 }}>{msg}</div>}
       {items.map((it) => (

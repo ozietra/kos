@@ -42,5 +42,11 @@ export interface PricingPlanPublic {
   is_active: boolean
 }
 
+export interface SeoSettings {
+  ga_id: string
+  gsc_verification: string
+}
+
 export const getHomeContent = () => getJson<HomeContent>('/api/content/home')
 export const getPricing = () => getJson<{ plans: PricingPlanPublic[] }>('/api/content/pricing')
+export const getSeo = () => getJson<SeoSettings>('/api/content/seo')

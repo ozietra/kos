@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import './globals.css'
+import { getSeo } from '@/lib/serverApi'
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: {
     default: 'kosgebhibe.com — KOSGEB Hibe Başvurusu Hazırlık Platformu',
     template: '%s | kosgebhibe.com',
@@ -36,10 +38,39 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+// Google Search Console doğrulama kodu admin panelinden gelir → <meta google-site-verification>
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSeo()
+  const code = seo?.gsc_verification?.trim()
+  if (!code) return baseMetadata
+  return { ...baseMetadata, verification: { google: code } }
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const seo = await getSeo()
+  const ga = seo?.ga_id?.trim()
+
   return (
     <html lang="tr" data-scroll-behavior="smooth">
-      <body>{children}</body>
+      <body>
+        {children}
+
+        {/* Google Analytics (admin panelinden ölçüm kimliği girilince devreye girer) */}
+        {ga && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${ga}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga-init" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${ga}');`}
+            </Script>
+          </>
+        )}
+      </body>
     </html>
   )
 }

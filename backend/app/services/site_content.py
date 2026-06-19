@@ -42,6 +42,20 @@ async def get_next_deadline_badge(db: AsyncSession) -> str:
     return f"{year} Güncel • {short} son başvuru: {_tr_date(deadline)}"
 
 
+async def get_seo_settings(db: AsyncSession) -> dict:
+    """Google Analytics ve Search Console değerlerini DB'den döndür (boşsa boş string)."""
+    res = await db.execute(
+        select(SiteContent).where(
+            SiteContent.key.in_(["google_analytics_id", "google_search_console"])
+        )
+    )
+    rows = {s.key: (s.value or "").strip() for s in res.scalars().all()}
+    return {
+        "ga_id": rows.get("google_analytics_id", ""),
+        "gsc_verification": rows.get("google_search_console", ""),
+    }
+
+
 async def get_home_content(db: AsyncSession) -> dict:
     """Ana sayfa için hero rozeti + istatistikler."""
     # Hero rozeti: override varsa onu, yoksa türetilmiş tarihi kullan

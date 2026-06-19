@@ -213,6 +213,9 @@ SITE_CONTENT_SEED = [
     {"key": "stat_project_count", "label": "Desteklenen proje sayısı (2025)", "value": "1.699", "group": "stats", "sort_order": 2},
     {"key": "stat_special_limit", "label": "Kadın/Genç/Engelli girişimcilere hibe limiti", "value": "1.650.000 ₺", "group": "stats", "sort_order": 3},
     {"key": "stat_periods", "label": "Yılda açılan başvuru dönemi", "value": "3", "group": "stats", "sort_order": 4},
+    # SEO / Analitik entegrasyonları (admin panelinden doldurulur, siteye otomatik enjekte edilir)
+    {"key": "google_analytics_id", "label": "Google Analytics Ölçüm Kimliği (G-XXXXXXX)", "value": "", "group": "seo", "sort_order": 10},
+    {"key": "google_search_console", "label": "Google Search Console doğrulama kodu (meta içeriği)", "value": "", "group": "seo", "sort_order": 11},
 ]
 
 
