@@ -302,7 +302,9 @@ async def list_content(
     admin: User = Depends(require_admin),
     db: AsyncSession = Depends(get_db),
 ):
-    result = await db.execute(select(SiteContent).order_by(SiteContent.group, SiteContent.sort_order))
+    result = await db.execute(
+        select(SiteContent).where(SiteContent.group != "system").order_by(SiteContent.group, SiteContent.sort_order)
+    )
     return [
         {"key": c.key, "label": c.label, "value": c.value, "group": c.group, "sort_order": c.sort_order}
         for c in result.scalars().all()

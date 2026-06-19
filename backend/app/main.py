@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import engine, Base
 from app.routers import auth, businesses, eligibility, nace, programs, applications, payments, admin, content
-from app.services.seed import seed_programs, bootstrap_admin, seed_site_content, seed_pricing_plans
+from app.services.seed import seed_programs, bootstrap_admin, seed_site_content, seed_pricing_plans, clear_legacy_seed_dates
 from app.utils.migrations import run_lightweight_migrations
 from app.database import AsyncSessionLocal
 
@@ -18,6 +18,7 @@ async def lifespan(app: FastAPI):
 
     async with AsyncSessionLocal() as db:
         await seed_programs(db)
+        await clear_legacy_seed_dates(db)
         await seed_site_content(db)
         await seed_pricing_plans(db)
         await bootstrap_admin(db)

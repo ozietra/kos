@@ -194,17 +194,37 @@ PROGRAMS_SEED = [
 
 
 async def seed_programs(db: AsyncSession) -> None:
-    """Program seed verisi — sadece yoksa ekle"""
+    """Program seed verisi — sadece yoksa ekle. Başvuru tarihleri KOSGEB tarafından
+    çağrı usulü açıldığı ve sabit/güvenilir olmadığı için seed'de tarih KOYULMAZ
+    (yanıltıcı tarih göstermemek için); gerçek tarihler scraper veya admin ile girilir."""
     for program_data in PROGRAMS_SEED:
         existing = await db.execute(
             select(KosgebProgram).where(KosgebProgram.program_code == program_data["program_code"])
         )
         if not existing.scalar_one_or_none():
-            program = KosgebProgram(**program_data)
-            db.add(program)
+            data = dict(program_data)
+            data["application_period_start"] = None
+            data["application_period_end"] = None
+            db.add(KosgebProgram(**data))
 
     await db.commit()
     print("✓ KOSGEB program seed verisi yüklendi.")
+
+
+async def clear_legacy_seed_dates(db: AsyncSession) -> None:
+    """Tek seferlik: daha önce uydurma tarihlerle eklenmiş seed programlarının
+    başvuru tarihlerini temizler. Bir flag ile yalnızca BİR kez çalışır; böylece
+    admin'in sonradan elle girdiği gerçek tarihler korunur."""
+    flag = await db.execute(select(SiteContent).where(SiteContent.key == "_seed_dates_cleared"))
+    if flag.scalar_one_or_none():
+        return
+    seed_codes = [p["program_code"] for p in PROGRAMS_SEED]
+    res = await db.execute(select(KosgebProgram).where(KosgebProgram.program_code.in_(seed_codes)))
+    for p in res.scalars().all():
+        p.application_period_start = None
+        p.application_period_end = None
+    db.add(SiteContent(key="_seed_dates_cleared", label="(sistem)", value="1", group="system", sort_order=999))
+    await db.commit()
 
 
 SITE_CONTENT_SEED = [
