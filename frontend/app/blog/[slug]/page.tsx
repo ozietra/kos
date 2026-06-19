@@ -559,6 +559,11 @@ Desteklenmesi uygun bulunan projeler sahibiyle iletişime geçilerek sözleşme 
 
 **kosgebhibe.com ile İGD başvuru dosyanızı 3–5 dakikada hazırlayın. 499 ₺'ye profesyonel proje özeti, iş planı ve belge kontrol listesi.**
     `,
+    faq: [
+      { q: 'İş Geliştirme Desteği ne kadar hibe veriyor?', a: 'İGD kapsamında geri ödemesiz hibe ve faizsiz/geri ödemeli destek bileşenleri bulunur; üst limitler ve oranlar güncel Uygulama Esaslarına göre belirlenir. Kesin tutarlar için kosgeb.gov.tr esas alınmalıdır.' },
+      { q: 'İş Geliştirme Desteğine kimler başvurabilir?', a: 'Genellikle girişimcilik eğitimi sonrası kurulmuş, belirli yaş aralığındaki yeni işletmeler hedeflenir. İşletmenin KOSGEB veri tabanında aktif olması ve vergi/SGK borcunun bulunmaması gerekir.' },
+      { q: 'İGD başvurusu için hangi belgeler gerekir?', a: 'İş planı, bütçe tablosu, KOSGEB veri tabanı kaydı, vergi levhası ve ticaret sicil bilgileri tipik olarak istenir. Program detayına göre ek belge gerekebilir.' },
+    ],
   },
 
   'kobigel-2026-basvuru-rehberi': {
@@ -647,6 +652,11 @@ KOBİGEL kapsamında desteklenen başlıca harcama kalemleri:
 
 **kosgebhibe.com'da KOBİGEL proje özeti, iş planı ve finansal projeksiyon 499 ₺'ye hazırlanır. Jüriye hazır, profesyonel dosya.**
     `,
+    faq: [
+      { q: 'KOBİGEL nedir?', a: 'KOBİGEL KOBİ Gelişim Destek Programı, belirli tema ve çağrılar kapsamında işletmelerin yenilikçi projelerini destekleyen, jüri/kurul değerlendirmeli bir programdır.' },
+      { q: 'KOBİGEL hibesi ne kadar?', a: 'Üst limit ve oranlar açılan çağrıya göre değişir. Güncel tutarlar için ilgili çağrının Uygulama Esaslarını ve kosgeb.gov.tr duyurularını kontrol edin.' },
+      { q: 'KOBİGEL başvurusu jüriyle mi değerlendirilir?', a: 'Evet, KOBİGEL projeleri kurul/jüri tarafından puanlanır. Net, ölçülebilir ve gerekçeli bir proje dosyası kabul şansını belirgin biçimde artırır.' },
+    ],
   },
 
   'kosgeb-basvurularinda-en-cok-yapilan-hatalar': {
@@ -720,6 +730,11 @@ Başvurmadan önce şu 7 maddeyi teyit edin:
 
 **kosgebhibe.com, başvuru dosyanızı bu hataları engelleyecek biçimde adım adım kontrol ederek hazırlar. 499 ₺'ye, danışmansız.**
     `,
+    faq: [
+      { q: 'KOSGEB başvurusu en çok neden reddedilir?', a: 'Vergi/SGK borcu, pasif KOSGEB kaydı, NACE-program uyumsuzluğu, zayıf gerekçelendirme ve eksik belge en sık karşılaşılan red nedenleridir.' },
+      { q: 'Başvuru hatalarından nasıl kaçınırım?', a: 'Başvuru öncesi borç ve kayıt durumunuzu kontrol edin, bütçe kalemlerini gerekçelendirin, tüm dosyada rakamları tutarlı tutun ve belgeleri eksiksiz yükleyin.' },
+      { q: 'Son gün başvurmak riskli mi?', a: 'Evet. Son günlerde sistem yoğunluğu teknik sorunlara yol açabilir; başvuruyu birkaç gün önceden tamamlamak daha güvenlidir.' },
+    ],
   },
 
   'kosgeb-icin-nace-kodu-nasil-belirlenir': {
@@ -782,6 +797,11 @@ Ana faaliyet konunuzu belirleyip o koda göre başvurmanız gerekir. Birden fazl
 
 **kosgebhibe.com üzerindeki NACE sorgulama aracıyla kodunuzu ücretsiz kontrol edebilirsiniz.**
     `,
+    faq: [
+      { q: 'KOSGEB için NACE kodu neden önemli?', a: 'Faaliyet kodunuz (NACE), başvurabileceğiniz programları belirler. Bazı kodlar belirli programlardan hariç tutulduğu için yanlış kod başvuruyu reddettirebilir.' },
+      { q: 'NACE kodumu nasıl öğrenirim?', a: 'NACE kodunuz vergi levhanızda ve ticaret sicil kaydınızda yer alır. Sitemizdeki ücretsiz NACE sorgulama aracıyla da sektörünüze uygun kodu kontrol edebilirsiniz.' },
+      { q: 'NACE kodumu değiştirebilir miyim?', a: 'Evet. Faaliyetiniz değiştiyse bağlı olduğunuz vergi dairesi veya ticaret sicili üzerinden NACE kodunuzu güncelleyebilirsiniz.' },
+    ],
   },
 
   'kosgeb-kaydi-nasil-yapilir': {
@@ -932,6 +952,11 @@ KOSGEB'in 2026 yılı için toplam destek bütçesi geçen yıla göre artırıl
 
 **Hangi programa uygun olduğunuzu öğrenmek için kosgebhibe.com ücretsiz uygunluk testini yapın. Başvuru dosyanızı 499 ₺'ye hazırlayın.**
     `,
+    faq: [
+      { q: '2026 KOSGEB hibe tutarları ne kadar?', a: 'Tutarlar programa ve güncel Uygulama Esaslarına göre değişir; bazı destekler birkaç bin TL, bazıları milyonlarca TL üst limit sunar. Kesin rakamlar için kosgeb.gov.tr esas alınmalıdır.' },
+      { q: 'Hangi KOSGEB programı en yüksek desteği veriyor?', a: 'Genellikle kapasite geliştirme ve dijital dönüşüm gibi yatırım odaklı programlar daha yüksek üst limit sunar; ancak bunlar çoğunlukla geri ödemeli veya karma yapıdadır.' },
+      { q: 'Hibe tutarları her yıl değişir mi?', a: 'Evet. Üst limitler ve oranlar her yıl ve çağrı bazında güncellenebilir. Başvuru öncesi güncel duyuruları kontrol edin.' },
+    ],
   },
 
   'kosgeb-2026-destekleri': {
