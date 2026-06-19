@@ -143,25 +143,8 @@ def _build_html(ctx: dict) -> str:
             f'<tbody>{rows}</tbody></table></section>'
         )
 
-    # Belge kontrol listesi
-    documents = ctx.get("documents") or []
-    if documents:
-        lis = ""
-        for doc in documents:
-            name = html_lib.escape(str(doc.get("name", "")))
-            where = html_lib.escape(str(doc.get("where_to_get", "")))
-            desc = html_lib.escape(str(doc.get("description", "")))
-            lis += (
-                f'<li class="doc-item"><div class="doc-name"><span class="cb"></span>{name}</div>'
-                f'<div class="doc-where">Temin yeri: {where}</div>'
-                + (f'<div class="doc-note">{desc}</div>' if desc else "")
-                + "</li>"
-            )
-        n += 1
-        sections.append(
-            f'<section class="section"><h2><span class="sec-no">{n}.</span> Gerekli Belgeler</h2>'
-            f'<ul class="doc-list">{lis}</ul></section>'
-        )
+    # NOT: "Gerekli Belgeler" kontrol listesi başvuru dosyasından kaldırıldı
+    # (kullanıcı talebi). Belge listesi artık PDF'e basılmaz.
 
     sections_html = "".join(sections)
 

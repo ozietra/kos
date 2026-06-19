@@ -3,11 +3,36 @@ AI Başvuru Metni Üretici — Groq Llama-3 Altyapısı (Faz 6)
 Kademeli üretim (Chunking) ve %90 Başarı (Self-Correction) filtreli
 """
 import os
+import re
 import asyncio
 from datetime import date
 from typing import AsyncGenerator
 from groq import AsyncGroq
 from app.config import settings
+
+# ─── METIN TEMIZLEME (yabanci alfabe temizleyici) ──────────
+# Llama modeli, Turkce yazmasi istense de ara sira farkli alfabelerden karakter
+# (Cince, Japonca, Korece, Kiril, Arapca vb.) sizdirabiliyor. Uretilen metni
+# Latin/Turkce + ortak noktalama + para birimi disindaki karakterlerden arindirir.
+# Araliklar kod noktasi olarak yazilir (kaynak ASCII kalsin diye chr ile kurulur):
+#   0x0020-0x024F : Basic Latin + Latin-1 + Latin Ext-A/B (Turkce ozel harfler dahil)
+#   0x2000-0x206F : Genel noktalama (tire, tirnak, ucnokta, madde imi)
+#   0x20A0-0x20BF : Para birimi sembolleri (TL sembolu dahil)
+_ALLOWED_RANGES = ((0x0020, 0x024F), (0x2000, 0x206F), (0x20A0, 0x20BF))
+_NON_LATIN = re.compile(
+    "[^" + "".join(chr(a) + "-" + chr(b) for a, b in _ALLOWED_RANGES) + r"\s]"
+)
+
+
+def _sanitize_tr(text: str) -> str:
+    """Turkce/Latin disi karakterleri at, olusan cift bosluklari sadelestir."""
+    if not text:
+        return text
+    text = _NON_LATIN.sub("", text)
+    text = re.sub(r"[ \t]{2,}", " ", text)
+    text = re.sub(r" +([,.;:!?])", r"\1", text)
+    return text
+
 
 client = AsyncGroq(api_key=settings.GROQ_API_KEY)
 
@@ -53,7 +78,7 @@ async def call_groq(prompt: str, max_retries=2) -> str:
                 temperature=0.6,
                 max_tokens=2500,
             )
-            return response.choices[0].message.content.strip()
+            return _sanitize_tr(response.choices[0].message.content.strip())
         except Exception as e:
             err_str = str(e).lower()
             if "429" in err_str or "rate limit" in err_str or "resource_exhausted" in err_str:
