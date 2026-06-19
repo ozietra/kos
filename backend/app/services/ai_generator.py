@@ -93,10 +93,25 @@ KOSGEB değerlendirme jürisinin beklentileri:
 - Her bütçe kalemi ve her talep, mantıklı bir gerekçeyle ("neden gerekli, neye yarayacak, geri dönüşü ne") açıklanmalı.
 - Yatırımın istihdama, üretime ve ülke ekonomisine katkısı net ortaya konmalı.
 
+EN KRİTİK KURAL — VERİ SADAKATİ:
+- Başvuru sahibinin verdiği rakamlara (bütçe kalemleri ve tutarları, toplam talep, ilk yıl gelir hedefi, istihdam sayısı, proje süresi) MUTLAK sadık kal. Bu rakamları AYNEN kullan.
+- ASLA kendi kafandan farklı bir rakam UYDURMA, yuvarlama veya değiştirme. Örneğin talep 200.000 TL ise hiçbir yerde 500.000 TL yazma.
+- Bölümler arası ÇELİŞME yasak: bir bölümde gelir 1.000.000 TL diyip başka bölümde 5.000.000 TL deme. Tüm dosyada aynı rakamlar geçer.
+- Bütçe kalemleri verilenlerdir (örn. donanım, yazılım, eğitim). Kendi kafandan "kuruluş gideri, personel gideri, makine-teçhizat" gibi kalemler EKLEME.
+- Bilgi verilmemişse uydurma; o noktayı genel ama tutarlı biçimde geç.
+
+TEKRAR YASAĞI:
+- Aynı cümleyi, fikri veya kalıbı tekrarlama. Her cümle yeni bir bilgi/argüman katmalı.
+- "KOSGEB tarafından desteklenen sektörlerde faaliyet göstererek sürdürülebilirliğini sağlamak" gibi içi boş, döngüsel dolgu cümleleri yazma.
+
+EN YÜKSEK ONAY İHTİMALİ:
+- Verilen bilgilerden hareketle, jürinin onaylama ihtimali en yüksek, somut ve gerçekçi senaryoyu kur.
+- Soyut vaatler yerine ölçülebilir hedef + gerekçe + beklenen sonuç üçlüsünü kullan.
+
 YAZIM KURALLARI:
 - Doğrudan dosya metnini yaz. "Tabii ki", "Kesinlikle", "Anlaşıldı", "İşte metniniz", "Umarım yardımcı olur" gibi sohbet/asistan kalıplarını ASLA kullanma.
 - Profesyonel bir danışmanın ağzından, resmi ama akıcı, ikna edici ve özgüvenli bir Türkçe kullan.
-- SADECE TÜRKÇE yaz. Hiçbir yabancı dil kelimesi veya farklı alfabe (Çince, Vietnamca vb.) kullanma.
+- SADECE TÜRKÇE yaz. Hiçbir yabancı dil kelimesi, farklı alfabe veya bozuk/uydurma kelime (örn. "tăngırmak") kullanma. Şüpheye düşersen yaygın, doğru Türkçe kelimeyi seç.
 - Hiçbir platform, marka, web sitesi veya yazılım adı geçirme. Metin, danışmanın işletme adına bizzat hazırladığı bir dosya gibi olmalı.
 - "Gerekçe → Sonuç" mantığıyla, jüriyi ikna edecek ciddiyette yaz.
 """
@@ -164,7 +179,7 @@ async def call_groq(prompt: str, max_tokens: int = 1800, rounds: int = 3) -> str
     content = await llm_complete(
         [{"role": "system", "content": SYSTEM_PROMPT},
          {"role": "user", "content": prompt}],
-        temperature=0.6, max_tokens=max_tokens, rounds=rounds,
+        temperature=0.4, max_tokens=max_tokens, rounds=rounds,
     )
     return _sanitize_tr(content)
 
@@ -210,14 +225,25 @@ def build_prompt(template: str, inputs: dict) -> str:
     body = template.format(**fill)
     # Başvurulan programın gerçek bilgileri varsa, her bölümün başına ekle ki
     # metin o programın amacı/şartları/destek unsurlarına birebir uygun yazılsın.
+    prefix_parts: list[str] = []
+    # 1) Başvuru sahibinin girdiği KESİN bilgiler (rakamlar) — en yüksek öncelik
+    facts = (inputs.get("facts_block") or "").strip()
+    if facts:
+        prefix_parts.append(
+            "BAŞVURU SAHİBİNİN GİRDİĞİ KESİN BİLGİLER — Bu rakam ve verileri AYNEN kullan; "
+            "ASLA farklı/uydurma rakam (bütçe, gelir, istihdam, süre) verme ve bu verilerle ÇELİŞME:\n"
+            f"{facts}"
+        )
+    # 2) Başvurulan programın resmi bilgileri (varsa)
     ctx = (inputs.get("program_context") or "").strip()
     if ctx:
-        return (
+        prefix_parts.append(
             "BAŞVURULAN KOSGEB PROGRAMININ RESMİ BİLGİLERİ "
-            "(metni bu programın amacı, başvuru şartları ve destek unsurlarına "
-            "birebir uygun, bunlara atıfla yaz):\n"
-            f"{ctx}\n\n---\n{body}"
+            "(metni bu programın amacı, başvuru şartları ve destek unsurlarına uygun, bunlara atıfla yaz):\n"
+            f"{ctx}"
         )
+    if prefix_parts:
+        return "\n\n".join(prefix_parts) + "\n\n---\n" + body
     return body
 
 

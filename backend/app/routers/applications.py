@@ -31,6 +31,54 @@ def _sse_msg(data: dict) -> str:
     return f"data: {json.dumps(data, ensure_ascii=False)}\n\n"
 
 
+def _build_facts_block(inp: dict) -> str:
+    """Kullanıcının formda girdiği KESİN bilgileri (özellikle rakamları) tek bir
+    blokta toplar; AI bunları aynen kullanmaya zorlanır (uydurma/çelişki engeli)."""
+    def g(k: str) -> str:
+        v = inp.get(k)
+        s = str(v).strip() if v is not None else ""
+        return "" if s in ("", "None", "belirtilmemiş") else s
+
+    lines: list[str] = []
+    if g("business_name"): lines.append(f"- İşletme adı: {g('business_name')}")
+    nace = (g("nace_code") + " " + g("nace_description")).strip()
+    if nace: lines.append(f"- NACE / sektör: {nace}")
+    if g("city"): lines.append(f"- Şehir: {g('city')}")
+    if g("business_age_months"): lines.append(f"- İşletme yaşı: {g('business_age_months')} ay")
+    if g("special_category"): lines.append(f"- Özel kategori: {g('special_category')}")
+    if g("project_title"): lines.append(f"- Proje başlığı: {g('project_title')}")
+    if g("project_idea"): lines.append(f"- Proje fikri: {g('project_idea')}")
+    if g("problem_solved"): lines.append(f"- Çözülen problem: {g('problem_solved')}")
+    if g("target_market"): lines.append(f"- Hedef pazar: {g('target_market')}")
+    if g("competitive_advantage"): lines.append(f"- Rekabet avantajı: {g('competitive_advantage')}")
+    if g("requested_amount"): lines.append(f"- Toplam talep edilen destek: {g('requested_amount')} TL")
+
+    # Bütçe kalemleri (JSON string olabilir) — SADECE bunlar kullanılmalı
+    bi = inp.get("budget_items")
+    items_str = ""
+    if bi:
+        try:
+            items = json.loads(bi) if isinstance(bi, str) else bi
+            parts = []
+            for it in (items or []):
+                if isinstance(it, dict):
+                    nm = it.get("name") or it.get("kalem") or ""
+                    am = it.get("amount") or it.get("tutar") or ""
+                    parts.append(f"{nm}: {am} TL" if am else str(nm))
+                else:
+                    parts.append(str(it))
+            items_str = "; ".join(p for p in parts if p and p != "None")
+        except Exception:
+            items_str = str(bi)
+    if items_str: lines.append(f"- Bütçe kalemleri (SADECE bunları kullan, yeni kalem ekleme): {items_str}")
+
+    if g("revenue_target_year1"): lines.append(f"- 1. yıl gelir hedefi: {g('revenue_target_year1')} TL")
+    if g("employment_target"): lines.append(f"- İstihdam hedefi: {g('employment_target')} kişi")
+    if g("project_duration_months"): lines.append(f"- Proje süresi: {g('project_duration_months')} ay")
+    if g("milestones"): lines.append(f"- Kilometre taşları: {g('milestones')}")
+    return "\n".join(lines)
+
+
 async def _build_program_context(program_type: str | None, db: AsyncSession) -> str | None:
     """Başvurulan programı koda/ada göre bul; AI'ya verilecek bağlam metnini kur."""
     if not program_type:
@@ -245,6 +293,11 @@ async def stream_progress(
     program_context = await _build_program_context(app.program_type, db)
     if program_context:
         inputs_dict["program_context"] = program_context
+
+    # Kullanıcının girdiği kesin bilgileri (rakamlar) AI'ya zorunlu bağlam yap
+    facts_block = _build_facts_block(inputs_dict)
+    if facts_block:
+        inputs_dict["facts_block"] = facts_block
 
     async def event_stream() -> AsyncGenerator[str, None]:
         try:
