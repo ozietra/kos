@@ -122,7 +122,18 @@ def build_prompt(template: str, inputs: dict) -> str:
     from string import Formatter
     keys = [fname for _, fname, _, _ in Formatter().parse(template) if fname]
     fill = {k: inputs.get(k) or "belirtilmemiş" for k in keys}
-    return template.format(**fill)
+    body = template.format(**fill)
+    # Başvurulan programın gerçek bilgileri varsa, her bölümün başına ekle ki
+    # metin o programın amacı/şartları/destek unsurlarına birebir uygun yazılsın.
+    ctx = (inputs.get("program_context") or "").strip()
+    if ctx:
+        return (
+            "BAŞVURULAN KOSGEB PROGRAMININ RESMİ BİLGİLERİ "
+            "(metni bu programın amacı, başvuru şartları ve destek unsurlarına "
+            "birebir uygun, bunlara atıfla yaz):\n"
+            f"{ctx}\n\n---\n{body}"
+        )
+    return body
 
 
 # ─── SEKSİYON FONKSİYONLARI ──────────────────────────────────────────────────

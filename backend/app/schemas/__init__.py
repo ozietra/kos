@@ -218,6 +218,10 @@ class ProgramResponse(BaseModel):
     application_period_end: date | None
     required_documents: list[str] | None
     key_criteria: list[str] | None
+    purpose: str | None = None
+    eligibility: str | None = None
+    support_items: list[dict] | None = None
+    detail_url: str | None = None
     is_active: bool
     last_updated: datetime
 

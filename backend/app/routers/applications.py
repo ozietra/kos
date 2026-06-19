@@ -11,7 +11,7 @@ from fastapi.responses import StreamingResponse, FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.database import get_db, get_redis
-from app.models import Application, ApplicationInput, Business, User
+from app.models import Application, ApplicationInput, Business, User, KosgebProgram
 from app.schemas import ApplicationCreate, ApplicationInputSubmit, ApplicationResponse, MessageResponse
 from app.utils.deps import get_current_user
 from app.services.ai_generator import (
@@ -29,6 +29,45 @@ router = APIRouter(prefix="/api/applications", tags=["applications"])
 
 def _sse_msg(data: dict) -> str:
     return f"data: {json.dumps(data, ensure_ascii=False)}\n\n"
+
+
+async def _build_program_context(program_type: str | None, db: AsyncSession) -> str | None:
+    """Başvurulan programı koda/ada göre bul; AI'ya verilecek bağlam metnini kur."""
+    if not program_type:
+        return None
+    res = await db.execute(
+        select(KosgebProgram).where(
+            (KosgebProgram.program_code == program_type)
+            | (KosgebProgram.program_name == program_type)
+        )
+    )
+    p = res.scalar_one_or_none()
+    if not p:
+        # Ada göre gevşek eşleşme (kısmi)
+        res = await db.execute(
+            select(KosgebProgram).where(KosgebProgram.program_name.ilike(f"%{program_type}%"))
+        )
+        p = res.scalars().first()
+    if not p:
+        return None
+
+    parts = [f"Program adı: {p.program_name}"]
+    if p.purpose:
+        parts.append(f"Amaç/Tanım: {p.purpose}")
+    if p.eligibility:
+        parts.append(f"Kimler başvurabilir / başvuru şartları: {p.eligibility}")
+    if p.max_support_amount:
+        parts.append(f"Azami destek tutarı: {p.max_support_amount:,} TL".replace(",", "."))
+    if p.support_items:
+        rows = "; ".join(
+            f"{i.get('unsur','')} (tutar: {i.get('tutar','') or '-'}, oran: {i.get('oran','') or '-'}, süre: {i.get('sure','') or '-'})"
+            for i in p.support_items if isinstance(i, dict)
+        )
+        if rows:
+            parts.append(f"Destek unsurları: {rows}")
+    if p.key_criteria:
+        parts.append("Önemli kriterler: " + "; ".join(p.key_criteria))
+    return "\n".join(parts)
 
 
 async def _update_progress(application_id: str, progress: int, text: str, db: AsyncSession):
@@ -201,6 +240,11 @@ async def stream_progress(
                 "Şehit/Gazi yakını" if business.is_veteran else "",
             ])) or "Standart",
         })
+
+    # Başvurulan programın gerçek (KOSGEB'den çekilmiş) bilgilerini bağlam olarak ekle
+    program_context = await _build_program_context(app.program_type, db)
+    if program_context:
+        inputs_dict["program_context"] = program_context
 
     async def event_stream() -> AsyncGenerator[str, None]:
         try:

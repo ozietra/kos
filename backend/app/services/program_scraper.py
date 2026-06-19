@@ -1,10 +1,16 @@
 """
-KOSGEB program oto-güncelleme servisi.
+KOSGEB program oto-güncelleme servisi (derin çekim).
 
-Akış: kosgeb.gov.tr'den çek → Groq ile yapısal ayrıştır → DB ile karşılaştır →
-SADECE `ProgramUpdateProposal` (onay bekleyen öneri) oluştur. Canlı
-`kosgeb_programs` tablosuna ASLA dokunmaz; değişiklik yalnızca admin onayıyla
-uygulanır. Her hata `ProgramFetchLog`'a yazılır, canlı site asla bozulmaz.
+Akış:
+  1. Destekler listeleme sayfasını çek → TÜM program detay linklerini çıkar.
+  2. Her detay sayfasına gir → Groq ile yapısal çıkar (amaç, şartlar, destek
+     unsurları: tutar/oran/süre, kriterler, varsa tarihler).
+  3. DB ile karşılaştır → SADECE `ProgramUpdateProposal` (onay bekleyen öneri)
+     oluştur. Canlı `kosgeb_programs` tablosuna ASLA dokunmaz.
+  4. DB'de olup KOSGEB'de artık listelenmeyen aktif programlar için "deactivate"
+     (kaldırma) önerisi üret — admin onaylarsa pasife alınır.
+
+Her hata `ProgramFetchLog`'a yazılır; canlı site asla bozulmaz.
 """
 import json
 import re
@@ -18,23 +24,29 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import KosgebProgram, ProgramUpdateProposal, ProgramFetchLog
 from app.services.ai_generator import client  # mevcut AsyncGroq istemcisi
 
-# Çekilecek KOSGEB kaynak sayfaları (gerektikçe genişletilebilir)
-SOURCE_URLS = [
-    "https://www.kosgeb.gov.tr/site/tr/genel/destekler/3/destekler",
-]
+# KOSGEB destekler listeleme sayfası (detay linkleri buradan toplanır)
+LISTING_URL = "https://www.kosgeb.gov.tr/site/tr/genel/destekler/3/destekler"
+_BASE = "https://www.kosgeb.gov.tr"
 
-_MAX_RAW = 45_000
+# Detay sayfası link kalıbı: /site/tr/genel/destekdetay/9327/sektorel-...-programi
+_DETAIL_RE = re.compile(r"/site/tr/genel/destekdetay/(\d+)/([a-z0-9\-]+)", re.IGNORECASE)
+
+_MAX_DETAILS = 20         # tek taramada en fazla detay sayfası (güvenlik sınırı)
+_MAX_RAW = 30_000         # AI'ya gönderilen metin üst sınırı
+_MIN_HEALTHY = 3          # kaldırma önerisi üretmek için gereken min. başarılı program
+
 _USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 )
 
-# proposed_data içinde tutulacak alanlar
+# proposed_data içinde tutulacak alanlar (DB ile diff'lenen)
 _FIELDS = [
     "program_name", "program_code", "max_support_amount", "support_type",
-    "eligible_nace_prefixes", "min_business_age_months", "max_business_age_months",
+    "min_business_age_months", "max_business_age_months",
     "application_period_start", "application_period_end",
     "required_documents", "key_criteria",
+    "purpose", "eligibility", "support_items", "detail_url",
 ]
 
 
@@ -46,66 +58,92 @@ def _strip_html(raw: str) -> str:
     return text
 
 
-async def _fetch(url: str) -> tuple[int | None, str | None, str | None]:
+async def _fetch_raw(url: str) -> tuple[int | None, str | None, str | None]:
+    """Ham HTML döndürür (status, html, error)."""
     try:
-        async with httpx.AsyncClient(timeout=20, follow_redirects=True,
+        async with httpx.AsyncClient(timeout=25, follow_redirects=True,
                                      headers={"User-Agent": _USER_AGENT}) as ac:
             resp = await ac.get(url)
             if resp.status_code != 200:
                 return resp.status_code, None, f"HTTP {resp.status_code}"
-            return resp.status_code, _strip_html(resp.text)[:_MAX_RAW], None
+            return resp.status_code, resp.text, None
     except Exception as e:
         return None, None, str(e)[:300]
 
 
-_PARSE_PROMPT = """Aşağıdaki metin KOSGEB destek programları hakkındadır. Metinden program bilgilerini çıkar.
+def _extract_detail_links(html: str) -> list[tuple[str, str]]:
+    """Listeleme HTML'inden (detay_url, kod) çiftlerini çıkar. Dedup'lu, sırayı korur."""
+    seen: set[str] = set()
+    out: list[tuple[str, str]] = []
+    for m in _DETAIL_RE.finditer(html):
+        pid = m.group(1)
+        if pid in seen:
+            continue
+        seen.add(pid)
+        path = m.group(0)
+        out.append((_BASE + path, f"K{pid}"))
+    return out
 
-SADECE ve SADECE bir JSON DİZİSİ döndür. Başka açıklama yazma. Her öğe şu alanları içersin (bilinmiyorsa null bırak):
-[
-  {{
-    "program_name": "tam program adı",
-    "program_code": "kısa kod (örn. IGD-2026) veya null",
-    "max_support_amount": tam sayı TL (örn. 2000000) veya null,
-    "support_type": "hibe | kredi_faiz | karma | geri_odemeli",
-    "min_business_age_months": tam sayı veya null,
-    "max_business_age_months": tam sayı veya null,
-    "application_period_start": "YYYY-MM-DD" veya null,
-    "application_period_end": "YYYY-MM-DD" veya null,
-    "required_documents": ["belge1", "belge2"],
-    "key_criteria": ["kriter1", "kriter2"]
-  }}
-]
+
+_DETAIL_PROMPT = """Aşağıdaki metin TEK bir KOSGEB destek programının resmi sayfasıdır. İçerikten program bilgilerini çıkar.
+
+SADECE ve SADECE tek bir JSON NESNESİ döndür. Başka açıklama yazma. Bilinmeyen alanı null bırak:
+{{
+  "program_name": "programın tam resmi adı",
+  "support_type": "hibe | kredi_faiz | karma | geri_odemeli",
+  "max_support_amount": en yüksek azami destek tutarı (sadece tam sayı TL, örn. 14000000) veya null,
+  "purpose": "programın amacı/tanımı, 2-4 cümlelik akıcı Türkçe özet",
+  "eligibility": "kimler başvurabilir ve temel başvuru şartları; kısa, madde madde düz metin",
+  "support_items": [
+    {{"unsur": "destek unsuru adı", "tutar": "üst limit (örn. 6.506.000 TL) veya boş", "oran": "destek oranı (örn. %60) veya boş", "sure": "destek süresi (örn. 10 Yıl) veya boş"}}
+  ],
+  "key_criteria": ["en önemli 3-6 kriter"],
+  "required_documents": ["başvuru için gereken belgeler"] veya null,
+  "application_period_start": "YYYY-MM-DD" veya null,
+  "application_period_end": "YYYY-MM-DD" veya null
+}}
+
+ÖNEMLİ:
+- Tarih (başvuru başlangıç/bitiş) KESİN ve net olarak belirtilmemişse null bırak. Tahmin etme.
+- "Destek Unsurları" tablosundaki her satırı support_items içine ekle (tutar/oran/süre ile).
+- SADECE Türkçe yaz, başka alfabe kullanma.
 
 Metin:
 {text}
 """
 
 
-async def _ai_parse(text: str) -> list[dict] | None:
+async def _ai_parse_detail(text: str, fallback_code: str) -> dict | None:
+    """Tek bir detay sayfası metnini yapısal program dict'ine çevirir."""
     try:
         resp = await client.chat.completions.create(
-            messages=[{"role": "user", "content": _PARSE_PROMPT.format(text=text)}],
+            messages=[{"role": "user", "content": _DETAIL_PROMPT.format(text=text)}],
             model="llama-3.3-70b-versatile",
             temperature=0.1,
-            max_tokens=2500,
+            max_tokens=2000,
         )
         out = resp.choices[0].message.content.strip()
         if out.startswith("```"):
             out = re.sub(r"^```(?:json)?|```$", "", out).strip()
         data = json.loads(out)
-        return data if isinstance(data, list) else None
+        if not isinstance(data, dict):
+            return None
+        return data
     except Exception:
         return None
 
 
-def _normalize(item: dict) -> dict | None:
-    """AI öğesini KosgebProgram alanlarına normalize et; geçersizse None."""
+def _normalize(item: dict, detail_url: str, code: str) -> dict | None:
+    """AI çıktısını KosgebProgram alanlarına normalize et; geçersizse None."""
     name = (item.get("program_name") or "").strip()
     if not name:
         return None
     out = {f: item.get(f) for f in _FIELDS}
     out["program_name"] = name
-    # Tarihleri doğrula (ISO string olarak sakla)
+    out["program_code"] = (item.get("program_code") or code)
+    out["detail_url"] = detail_url
+
+    # Tarihleri doğrula (ISO string olarak sakla; geçersizse null)
     for dk in ("application_period_start", "application_period_end"):
         v = out.get(dk)
         if v:
@@ -113,12 +151,18 @@ def _normalize(item: dict) -> dict | None:
                 date.fromisoformat(str(v))
             except Exception:
                 out[dk] = None
+
     # max_support_amount int'e zorla
     if out.get("max_support_amount") is not None:
         try:
             out["max_support_amount"] = int(out["max_support_amount"])
         except Exception:
             out["max_support_amount"] = None
+
+    # support_items düzgün liste mi?
+    si = out.get("support_items")
+    if not isinstance(si, list):
+        out["support_items"] = None
     return out
 
 
@@ -128,13 +172,16 @@ def _program_to_dict(p: KosgebProgram) -> dict:
         "program_code": p.program_code,
         "max_support_amount": p.max_support_amount,
         "support_type": p.support_type,
-        "eligible_nace_prefixes": list(p.eligible_nace_prefixes) if p.eligible_nace_prefixes else None,
         "min_business_age_months": p.min_business_age_months,
         "max_business_age_months": p.max_business_age_months,
         "application_period_start": p.application_period_start.isoformat() if p.application_period_start else None,
         "application_period_end": p.application_period_end.isoformat() if p.application_period_end else None,
         "required_documents": list(p.required_documents) if p.required_documents else None,
         "key_criteria": list(p.key_criteria) if p.key_criteria else None,
+        "purpose": p.purpose,
+        "eligibility": p.eligibility,
+        "support_items": p.support_items,
+        "detail_url": p.detail_url,
     }
 
 
@@ -148,92 +195,142 @@ def _diff(current: dict, proposed: dict) -> list[dict]:
 
 
 async def run_scrape(db: AsyncSession, triggered_by: str = "schedule") -> dict:
-    """Tüm kaynakları işle, öneriler üret. Hatalar canlıya yansımaz."""
+    """Tüm programları derinlemesine işle, öneriler üret. Hatalar canlıya yansımaz."""
     total_proposals = 0
-    logs = []
+    logs: list[dict] = []
 
-    # Mevcut programları kod ve isme göre indeksle
+    # Mevcut programları indeksle
     existing_res = await db.execute(select(KosgebProgram))
     existing = existing_res.scalars().all()
     by_code = {p.program_code: p for p in existing if p.program_code}
     by_name = {p.program_name.lower(): p for p in existing}
 
-    for url in SOURCE_URLS:
-        http_status, text, error = await _fetch(url)
-        if error or not text:
-            db.add(ProgramFetchLog(source_url=url, status="fetch_failed",
-                                   http_status=http_status, error=error,
-                                   triggered_by=triggered_by))
-            logs.append({"url": url, "status": "fetch_failed", "error": error})
+    # 1) Listeleme sayfası → detay linkleri
+    http_status, listing_html, error = await _fetch_raw(LISTING_URL)
+    if error or not listing_html:
+        db.add(ProgramFetchLog(source_url=LISTING_URL, status="fetch_failed",
+                               http_status=http_status, error=error, triggered_by=triggered_by))
+        await db.commit()
+        return {"total_proposals": 0, "sources": [{"url": LISTING_URL, "status": "fetch_failed", "error": error}]}
+
+    links = _extract_detail_links(listing_html)[:_MAX_DETAILS]
+    fetch_log = ProgramFetchLog(source_url=LISTING_URL, status="success",
+                                http_status=http_status, raw_text=f"{len(links)} program linki bulundu",
+                                triggered_by=triggered_by)
+    db.add(fetch_log)
+    await db.flush()  # fetch_log.id
+
+    seen_codes: set[str] = set()
+    parsed_ok = 0
+
+    # 2) Her detay sayfasını işle
+    for detail_url, code in links:
+        d_status, d_html, d_err = await _fetch_raw(detail_url)
+        if d_err or not d_html:
+            logs.append({"url": detail_url, "status": "fetch_failed", "error": d_err})
             continue
 
-        parsed = await _ai_parse(text)
-        if parsed is None:
-            db.add(ProgramFetchLog(source_url=url, status="parse_failed",
-                                   http_status=http_status, raw_text=text,
-                                   error="AI ayrıştırma başarısız", triggered_by=triggered_by))
-            logs.append({"url": url, "status": "parse_failed"})
+        text = _strip_html(d_html)[:_MAX_RAW]
+        raw_item = await _ai_parse_detail(text, code)
+        if not raw_item:
+            logs.append({"url": detail_url, "status": "parse_failed"})
             continue
 
-        created_here = 0
-        fetch_log = ProgramFetchLog(source_url=url, status="success",
-                                    http_status=http_status, raw_text=text,
-                                    triggered_by=triggered_by)
-        db.add(fetch_log)
-        await db.flush()  # fetch_log.id
+        item = _normalize(raw_item, detail_url, code)
+        if not item:
+            logs.append({"url": detail_url, "status": "empty"})
+            continue
 
-        for raw_item in parsed:
-            item = _normalize(raw_item)
-            if not item:
+        parsed_ok += 1
+        seen_codes.add(item["program_code"])
+
+        match = by_code.get(item["program_code"]) or by_name.get(item["program_name"].lower())
+        if match:
+            current = _program_to_dict(match)
+            changes = _diff(current, item)
+            if not changes:
+                logs.append({"url": detail_url, "status": "no_change", "program": item["program_name"]})
                 continue
-            match = by_code.get(item.get("program_code")) or by_name.get(item["program_name"].lower())
+            change_type, program_id, current_data = "update", match.id, current
+        else:
+            change_type, program_id, current_data, changes = "create", None, None, None
 
-            if match:
-                current = _program_to_dict(match)
-                changes = _diff(current, item)
-                if not changes:
-                    continue
-                change_type, program_id, current_data = "update", match.id, current
+        # Aynı bekleyen öneri var mı? (de-dupe; eskisini supersede et)
+        dup_res = await db.execute(
+            select(ProgramUpdateProposal).where(
+                ProgramUpdateProposal.status == "pending",
+                ProgramUpdateProposal.program_code == item["program_code"],
+                ProgramUpdateProposal.change_type == change_type,
+            )
+        )
+        is_dup = False
+        for d in dup_res.scalars().all():
+            if d.proposed_data == item:
+                is_dup = True
             else:
-                change_type, program_id, current_data, changes = "create", None, None, None
+                d.status = "superseded"
+        if is_dup:
+            logs.append({"url": detail_url, "status": "duplicate", "program": item["program_name"]})
+            continue
 
-            # Aynı bekleyen öneri var mı? (basit de-dupe)
-            dup_res = await db.execute(
+        db.add(ProgramUpdateProposal(
+            program_id=program_id,
+            program_code=item["program_code"],
+            change_type=change_type,
+            proposed_data=item,
+            current_data=current_data,
+            diff_summary={"changes": changes} if changes else None,
+            source_url=detail_url,
+            raw_excerpt=text[:1500],
+            confidence="medium",
+            status="pending",
+            fetch_log_id=fetch_log.id,
+        ))
+        total_proposals += 1
+        logs.append({"url": detail_url, "status": change_type, "program": item["program_name"]})
+
+    # 3) KOSGEB'de artık listelenmeyen aktif programlar için kaldırma önerisi
+    #    (yalnızca tarama sağlıklıysa — kısmi hatada toplu kaldırma yapma)
+    removals = 0
+    if parsed_ok >= _MIN_HEALTHY:
+        for p in existing:
+            if not p.is_active:
+                continue
+            if p.program_code in seen_codes:
+                continue
+            # Zaten bekleyen kaldırma önerisi var mı?
+            dup = await db.execute(
                 select(ProgramUpdateProposal).where(
                     ProgramUpdateProposal.status == "pending",
-                    ProgramUpdateProposal.program_code == item.get("program_code"),
-                    ProgramUpdateProposal.change_type == change_type,
+                    ProgramUpdateProposal.program_id == p.id,
+                    ProgramUpdateProposal.change_type == "deactivate",
                 )
             )
-            is_dup = False
-            for d in dup_res.scalars().all():
-                if d.proposed_data == item:
-                    is_dup = True
-                else:
-                    d.status = "superseded"
-            if is_dup:
+            if dup.scalar_one_or_none():
                 continue
-
             db.add(ProgramUpdateProposal(
-                program_id=program_id,
-                program_code=item.get("program_code"),
-                change_type=change_type,
-                proposed_data=item,
-                current_data=current_data,
-                diff_summary={"changes": changes} if changes else None,
-                source_url=url,
-                raw_excerpt=text[:1500],
+                program_id=p.id,
+                program_code=p.program_code,
+                change_type="deactivate",
+                proposed_data={"is_active": False},
+                current_data=_program_to_dict(p),
+                diff_summary={"note": "Bu program KOSGEB destekler sayfasında artık listelenmiyor; kaldırılması (pasife alınması) öneriliyor."},
+                source_url=LISTING_URL,
                 confidence="medium",
                 status="pending",
                 fetch_log_id=fetch_log.id,
             ))
-            created_here += 1
+            removals += 1
             total_proposals += 1
 
-        fetch_log.proposals_created = created_here
-        if created_here == 0:
-            fetch_log.status = "no_change"
-        logs.append({"url": url, "status": fetch_log.status, "proposals": created_here})
+    fetch_log.proposals_created = total_proposals
+    if total_proposals == 0:
+        fetch_log.status = "no_change"
 
     await db.commit()
-    return {"total_proposals": total_proposals, "sources": logs}
+    return {
+        "total_proposals": total_proposals,
+        "programs_found": parsed_ok,
+        "removals_proposed": removals,
+        "sources": logs,
+    }

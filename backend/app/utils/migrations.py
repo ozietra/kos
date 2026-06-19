@@ -18,6 +18,11 @@ _COLUMN_MIGRATIONS = [
     ("payments", "provider", "VARCHAR(20)"),
     ("payments", "provider_reference", "VARCHAR(255)"),
     ("payments", "paid_at", "TIMESTAMPTZ"),
+    # KOSGEB programlarına detay sayfasından çekilen zengin içerik
+    ("kosgeb_programs", "purpose", "TEXT"),
+    ("kosgeb_programs", "eligibility", "TEXT"),
+    ("kosgeb_programs", "support_items", "JSONB"),
+    ("kosgeb_programs", "detail_url", "VARCHAR(500)"),
 ]
 
 

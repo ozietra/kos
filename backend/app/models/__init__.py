@@ -136,6 +136,11 @@ class KosgebProgram(Base):
     application_period_end: Mapped[date | None] = mapped_column(Date)
     required_documents: Mapped[list[str] | None] = mapped_column(ARRAY(String))
     key_criteria: Mapped[list[str] | None] = mapped_column(ARRAY(String))
+    # KOSGEB detay sayfasından çekilen zengin içerik (AI ve site gösterimi için)
+    purpose: Mapped[str | None] = mapped_column(Text)            # Amaç / tanım
+    eligibility: Mapped[str | None] = mapped_column(Text)        # Kimler başvurabilir / şartlar
+    support_items: Mapped[list[dict] | None] = mapped_column(JSONB)  # [{unsur, tutar, oran, sure}]
+    detail_url: Mapped[str | None] = mapped_column(String(500))  # Kaynak detay sayfası
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     last_updated: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
