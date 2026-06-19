@@ -13,6 +13,20 @@ export const metadata: Metadata = {
 // Faz 5'te CMS/MDX ile gerçek makaleler eklenecek
 const POSTS = [
   {
+    slug: 'kosgeb-geri-odemeli-destek-faizsiz-kredi',
+    title: 'KOSGEB Geri Ödemeli Destek ve Faizsiz Kredi Nedir?',
+    excerpt: 'Hibe mi kredi mi? Geri ödemesiz, geri ödemeli (faizsiz) ve karma destek yapıları arasındaki farklar.',
+    category: 'Bilgi',
+    readMin: 6,
+  },
+  {
+    slug: 'vergi-sgk-borcu-kosgeb-basvurusu',
+    title: 'Vergi ve SGK Borcu KOSGEB Başvurusunu Engeller mi?',
+    excerpt: 'Borç başvuruyu nasıl etkiler, yapılandırma ne işe yarar ve başvuru öncesi neler yapılmalı?',
+    category: 'İpucu',
+    readMin: 5,
+  },
+  {
     slug: 'kosgeb-is-plani-nasil-yazilir',
     title: 'KOSGEB İş Planı Nasıl Yazılır? (Örnekli Adım Adım Rehber)',
     excerpt: 'Jürinin onaylayacağı iş planı: bölüm bölüm içerik, bütçe gerekçelendirme ve sık yapılan hatalar — örneklerle.',

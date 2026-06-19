@@ -16,6 +16,92 @@ const CONTENT: Record<string, {
   faq?: { q: string; a: string }[]
 }> = {
 
+  'kosgeb-geri-odemeli-destek-faizsiz-kredi': {
+    title: 'KOSGEB Geri Ödemeli Destek ve Faizsiz Kredi Nedir?',
+    description: 'KOSGEB destekleri hibe mi kredi mi? Geri ödemesiz hibe, geri ödemeli (faizsiz/düşük faizli) destek ve karma yapı arasındaki farklar.',
+    category: 'Bilgi',
+    readMin: 6,
+    dateStr: 'Haziran 2026',
+    content: `
+## Hibe mi, Kredi mi? Önce Bunu Anlayın
+
+KOSGEB destekleri tek tip değildir. Bir programa başvurmadan önce, desteğin **geri ödemeli mi yoksa geri ödemesiz mi** olduğunu bilmek, finansal planınızı doğru kurmanız için kritiktir. Üç temel yapı vardır:
+
+- **Geri ödemesiz (hibe):** Belirli koşullarla harcamanızın bir kısmı karşılanır, geri ödemezsiniz.
+- **Geri ödemeli (faizsiz/düşük faizli):** Destek bir kredi gibi verilir; çoğu zaman **faizsiz** veya düşük maliyetli olup belirli bir vade ve ödemesiz dönemle geri ödenir.
+- **Karma:** Aynı program içinde hem geri ödemesiz hem geri ödemeli bileşenler bulunur.
+
+## Geri Ödemeli Destek Nasıl İşler?
+
+Geri ödemeli desteklerde genellikle bir **ödemesiz dönem** (örneğin ilk aylar) ve ardından taksitli geri ödeme planı olur. Faizsiz veya çok düşük maliyetli olması, ticari krediye göre büyük avantaj sağlar. Önemli olan, geri ödeme takvimini nakit akışınıza göre planlamaktır.
+
+## Hangisi Sizin İçin Daha İyi?
+
+| Durum | Uygun yapı |
+|---|---|
+| Öz kaynağı sınırlı, geri ödeme yükü istemiyorsanız | Geri ödemesiz (hibe) ağırlıklı programlar |
+| Daha büyük yatırım, uygun maliyetli finansman arıyorsanız | Geri ödemeli (faizsiz) destek |
+| Hem başlangıç desteği hem yatırım finansmanı | Karma yapılı programlar |
+
+## Dikkat Edilmesi Gerekenler
+
+- Desteğin türü ve oranları **programa ve güncel Uygulama Esaslarına** göre değişir.
+- Geri ödemeli destekte teminat/şart istenebilir; başvuru öncesi koşulları okuyun.
+- Hibe oranları çoğu zaman harcamanın tamamını değil, **belirli bir yüzdesini** karşılar.
+
+---
+
+Hangi programın hibe, hangisinin geri ödemeli olduğunu ve size uygun olanı görmek için ücretsiz uygunluk testimizi kullanın. Güncel oran ve koşullar için **kosgeb.gov.tr**'yi esas alın.
+`,
+    faq: [
+      { q: 'KOSGEB desteği geri ödenir mi?', a: 'Programa göre değişir. Bazı destekler geri ödemesiz hibedir; bazıları faizsiz/düşük faizli geri ödemeli destektir; bazı programlar ise her ikisini içeren karma yapıdadır.' },
+      { q: 'KOSGEB kredisi faizsiz mi?', a: 'Birçok geri ödemeli KOSGEB desteği faizsiz veya çok düşük maliyetlidir ve ödemesiz dönem içerebilir. Kesin koşullar ilgili programın güncel Uygulama Esaslarında belirtilir.' },
+      { q: 'Hibe harcamanın tamamını karşılar mı?', a: 'Genellikle hayır. Hibe, uygun harcamanın belirli bir yüzdesini (destek oranı) karşılar; kalan kısım işletmeye aittir. Oranlar programa göre değişir.' },
+    ],
+  },
+
+  'vergi-sgk-borcu-kosgeb-basvurusu': {
+    title: 'Vergi ve SGK Borcu KOSGEB Başvurusunu Engeller mi?',
+    description: 'Vergi veya SGK borcu KOSGEB başvurusunu nasıl etkiler? Yapılandırılmış borç, "borcu yoktur" belgesi ve başvuru öncesi yapılması gerekenler.',
+    category: 'İpucu',
+    readMin: 5,
+    dateStr: 'Haziran 2026',
+    content: `
+## Kısa Cevap: Evet, Engelleyebilir
+
+Vadesi geçmiş **vergi veya SGK borcu**, KOSGEB başvurularında en sık karşılaşılan ön eleme (uygunluk) red nedenlerinden biridir. Başvurunuz, içeriği ne kadar güçlü olursa olsun, borç nedeniyle jüriye gitmeden elenebilir. Bu yüzden başvurudan önce borç durumunuzu net olarak kontrol etmek şarttır.
+
+## Hangi Borç Sorun Olur?
+
+- **Vadesi geçmiş vergi borcu:** Gelir İdaresi Başkanlığı (GİB) üzerinden sorgulanır. Diskalifiye sebebidir.
+- **SGK prim borcu:** SGK sistemleri üzerinden kontrol edilir. Vadesi geçmiş prim borcu engel oluşturabilir.
+
+## Yapılandırılmış Borç Ne Olacak?
+
+Borcunuzu **yapılandırdıysanız** ve taksitlerinizi düzenli ödüyorsanız, durum çoğu zaman daha olumludur; ancak yapılandırılmış borcun bile başvuruda **beyan edilmesi** gerekebilir. Net kural için başvurduğunuz programın Uygulama Esaslarını ve KOSGEB İl Müdürlüğünüzü esas alın.
+
+## Başvuru Öncesi Yapılacaklar
+
+1. **GİB'den** vergi borcu sorgulayın; varsa kapatın veya yapılandırın.
+2. **SGK'dan** prim borcu durumunuzu kontrol edin.
+3. Gerekiyorsa **"borcu yoktur" / güncel durum belgesi** alın.
+4. Borç kapatıldıktan sonra sistemlerin güncellenmesi zaman alabilir; başvuruyu buna göre planlayın.
+
+## Önemli Not
+
+Borç durumu KOSGEB'in değil, GİB ve SGK kayıtlarının yansımasıdır. Bu yüzden başvuru gününe borcu bırakmayın; son dakika kapatmalarda kayıtların güncellenmemesi riskine karşı önceden hareket edin.
+
+---
+
+Borç ve diğer uygunluk kriterlerini hızlıca kontrol etmek için ücretsiz uygunluk testimizi kullanabilirsiniz. Kesin kurallar için **kosgeb.gov.tr** ve ilgili programın Uygulama Esaslarını inceleyin.
+`,
+    faq: [
+      { q: 'Vergi borcu olan KOSGEB başvurusu yapabilir mi?', a: 'Vadesi geçmiş vergi borcu genellikle ön eleme red nedenidir. Başvurudan önce borcun kapatılması veya yapılandırılması önerilir.' },
+      { q: 'SGK borcu KOSGEB başvurusunu engeller mi?', a: 'Vadesi geçmiş SGK prim borcu başvuruya engel oluşturabilir. Başvuru öncesi SGK üzerinden borç durumunuzu kontrol edin.' },
+      { q: 'Borcumu yapılandırdım, başvurabilir miyim?', a: 'Yapılandırılmış ve düzenli ödenen borç çoğu durumda daha olumludur, ancak beyan edilmesi gerekebilir. Net kural için ilgili programın Uygulama Esaslarını ve KOSGEB İl Müdürlüğünü esas alın.' },
+    ],
+  },
+
   'kosgeb-is-plani-nasil-yazilir': {
     title: 'KOSGEB İş Planı Nasıl Yazılır? (Örnekli Adım Adım Rehber)',
     description: 'Jürinin onaylayacağı KOSGEB iş planı nasıl hazırlanır? Bölüm bölüm içerik, bütçe gerekçelendirme ve sık yapılan hatalar — örneklerle.',
@@ -688,6 +774,11 @@ Hayır, KOSGEB kaydı tamamen ücretsizdir.
 
 **Kaydınız aktifse sıradaki adım başvuru dosyanızı hazırlamak. kosgebhibe.com ile 3–5 dakikada hazır dosya, 499 ₺.**
     `,
+    faq: [
+      { q: 'KOSGEB kaydı ücretli mi?', a: 'Hayır, KOSGEB Veri Tabanı kaydı tamamen ücretsizdir ve edevlet.kosgeb.gov.tr üzerinden e-Devlet şifrenizle yapılır.' },
+      { q: 'KOSGEB kaydı için ne gerekli?', a: 'Geçerli bir e-Devlet şifresi ve işletmenizin (şahıs veya sermaye şirketi) kurulu olması yeterlidir. e-Devlet şifresini PTT şubelerinden alabilirsiniz.' },
+      { q: 'Kaydım pasif görünüyorsa ne yapmalıyım?', a: 'Pasif kayıt başvuruya engeldir. edevlet.kosgeb.gov.tr üzerinden işletme beyanınızı güncelleyerek kaydı aktif hale getirebilir, gerekirse bağlı olduğunuz KOSGEB İl Müdürlüğünden destek alabilirsiniz.' },
+    ],
   },
 
   'kosgeb-hibe-miktarlari-2026': {
