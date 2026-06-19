@@ -135,6 +135,8 @@ export const admin = {
   adminPayments: (skip = 0, limit = 50) => request<any[]>(`/admin/payments?skip=${skip}&limit=${limit}`),
   updateProgram: (id: string, data: any) =>
     request<any>(`/admin/programs/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteProgram: (id: string) =>
+    request<any>(`/admin/programs/${id}`, { method: 'DELETE' }),
 
   // Program oto-güncelleme önerileri
   proposals: (status = 'pending') =>

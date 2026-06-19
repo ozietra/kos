@@ -142,6 +142,22 @@ async def update_program(
     return {"message": "Program güncellendi.", "program_id": str(prog.id)}
 
 
+@router.delete("/programs/{program_id}")
+async def delete_program(
+    program_id: str,
+    admin: User = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    """Admin: programı kalıcı olarak sil (biten/iptal olan programlar için)."""
+    result = await db.execute(select(KosgebProgram).where(KosgebProgram.id == uuid.UUID(program_id)))
+    prog = result.scalar_one_or_none()
+    if not prog:
+        raise HTTPException(status_code=404, detail="Program bulunamadı.")
+    await db.delete(prog)
+    await db.commit()
+    return {"message": "Program silindi.", "program_id": program_id}
+
+
 # ─── PROGRAM OTO-GÜNCELLEME ÖNERİLERİ ────────────────────────────────────────
 
 _DATE_FIELDS = ("application_period_start", "application_period_end")

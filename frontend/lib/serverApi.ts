@@ -9,7 +9,7 @@ const BASE =
   process.env.NEXT_PUBLIC_API_URL ||
   'http://localhost:8000'
 
-async function getJson<T>(path: string, revalidate = 300): Promise<T | null> {
+async function getJson<T>(path: string, revalidate = 30): Promise<T | null> {
   try {
     const res = await fetch(`${BASE}${path}`, { next: { revalidate } })
     if (!res.ok) return null

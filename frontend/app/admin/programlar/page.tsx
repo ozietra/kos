@@ -31,12 +31,27 @@ export default function AdminProgramsPage() {
     setSavingId(p.id)
     try {
       await admin.updateProgram(p.id, {
+        program_name: p.program_name,
         application_period_start: p.application_period_start || null,
         application_period_end: p.application_period_end || null,
         is_active: p.is_active,
       })
       setMsg(`Kaydedildi: ${p.program_name}`)
       loadPrograms()
+    } catch (e: any) {
+      setMsg(e.message)
+    } finally {
+      setSavingId(null)
+    }
+  }
+
+  const deleteProgram = async (p: any) => {
+    if (!confirm(`"${p.program_name}" programı kalıcı olarak silinsin mi? Bu işlem geri alınamaz.`)) return
+    setSavingId(p.id)
+    try {
+      await admin.deleteProgram(p.id)
+      setPrograms((ps) => ps.filter((x) => x.id !== p.id))
+      setMsg(`Silindi: ${p.program_name}`)
     } catch (e: any) {
       setMsg(e.message)
     } finally {
@@ -139,7 +154,11 @@ export default function AdminProgramsPage() {
       </p>
       {programs.map((p) => (
         <div key={p.id} style={{ border: '1px solid #e4e3dc', borderRadius: 8, padding: 14, marginBottom: 10, display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-          <div style={{ flex: '1 1 260px', fontWeight: 600, fontSize: 14 }}>{p.program_name}</div>
+          <input
+            value={p.program_name || ''}
+            onChange={(e) => setProg(p.id, 'program_name', e.target.value)}
+            style={{ flex: '1 1 260px', fontWeight: 600, fontSize: 14, padding: '6px 8px', border: '1px solid #d8d8d8', borderRadius: 6 }}
+          />
           <label style={{ fontSize: 12, color: '#6b6a62' }}>Başlangıç
             <input type="date" value={p.application_period_start || ''} onChange={(e) => setProg(p.id, 'application_period_start', e.target.value)}
               style={{ display: 'block', padding: '6px 8px', border: '1px solid #d8d8d8', borderRadius: 6 }} />
@@ -154,6 +173,10 @@ export default function AdminProgramsPage() {
           <button onClick={() => saveProgram(p)} disabled={savingId === p.id}
             style={{ background: '#003366', color: '#fff', border: 0, borderRadius: 6, padding: '8px 14px', cursor: 'pointer' }}>
             {savingId === p.id ? '…' : 'Kaydet'}
+          </button>
+          <button onClick={() => deleteProgram(p)} disabled={savingId === p.id}
+            style={{ background: '#fff', color: '#c0392b', border: '1px solid #c0392b', borderRadius: 6, padding: '8px 14px', cursor: 'pointer' }}>
+            Sil
           </button>
         </div>
       ))}
