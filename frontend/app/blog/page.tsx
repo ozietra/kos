@@ -13,6 +13,20 @@ export const metadata: Metadata = {
 // Faz 5'te CMS/MDX ile gerçek makaleler eklenecek
 const POSTS = [
   {
+    slug: 'kosgeb-basvurusu-reddedilirse-ne-yapmali',
+    title: 'KOSGEB Başvurusu Reddedilirse Ne Yapmalı? İtiraz ve Yeniden Başvuru',
+    excerpt: 'Başvurunuz reddedildiyse red nedenini öğrenme, itiraz hakkı ve bir sonraki dönem güçlü başvuru için adım adım rehber.',
+    category: 'İpucu',
+    readMin: 7,
+  },
+  {
+    slug: 'kadin-girisimci-kosgeb-destekleri-2026',
+    title: 'Kadın Girişimci KOSGEB Destekleri 2026: Avantajlar ve Başvuru',
+    excerpt: 'Kadın girişimciler için ek hibe avantajları, uygun programlar ve başvuru adımları — 2026 güncel.',
+    category: 'Program Analizi',
+    readMin: 6,
+  },
+  {
     slug: 'kosgeb-hibe-basvurusu-nasil-yapilir',
     title: 'KOSGEB Hibe Başvurusu Nasıl Yapılır? (2026 Güncel Rehber)',
     excerpt: 'Adım adım KOSGEB hibe başvuru süreci: kayıt, belgeler, başvuru formu ve sık yapılan hatalar.',

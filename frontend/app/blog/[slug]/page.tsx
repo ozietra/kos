@@ -13,7 +13,105 @@ const CONTENT: Record<string, {
   category: string
   readMin: number
   dateStr: string
+  faq?: { q: string; a: string }[]
 }> = {
+
+  'kosgeb-basvurusu-reddedilirse-ne-yapmali': {
+    title: 'KOSGEB Başvurusu Reddedilirse Ne Yapmalı? İtiraz ve Yeniden Başvuru',
+    description: 'KOSGEB başvurunuz reddedildiyse panik yapmayın. Red nedenini öğrenme, itiraz hakkı ve bir sonraki dönem güçlü başvuru için adım adım rehber.',
+    category: 'İpucu',
+    readMin: 7,
+    dateStr: 'Haziran 2026',
+    content: `
+## Başvurum Reddedildi, Bu Son mu?
+
+Hayır. KOSGEB başvurusunun reddedilmesi, bir daha başvuramayacağınız anlamına gelmez. Çoğu red, **düzeltilebilir** eksikliklerden kaynaklanır: eksik belge, zayıf gerekçelendirme, bütçe-faaliyet uyumsuzluğu veya uygunluk kriterlerinin karşılanmaması. Önce red nedenini net olarak anlamak, sonra ona göre hareket etmek gerekir.
+
+## Adım 1: Red Nedenini Öğrenin
+
+Değerlendirme sonucu ve gerekçesi, başvuruyu yaptığınız KOSGEB e-Hizmetler (edevlet.kosgeb.gov.tr) sistemindeki başvuru kaydınızda yer alır. Ayrıca bağlı bulunduğunuz **KOSGEB İl Müdürlüğü** ile görüşerek gerekçe hakkında daha ayrıntılı bilgi alabilirsiniz.
+
+Red nedenleri genellikle iki gruba ayrılır:
+
+- **Uygunluk (ön eleme) reddi:** Vergi/SGK borcu, pasif KOSGEB kaydı, yaş/sektör kriterine uymama gibi. Bunlar genelde başvurunun jüriye bile gitmeden elenmesine yol açar.
+- **Değerlendirme (jüri) reddi:** Proje jüriye gitmiş ama yeterli puanı alamamıştır. Burada sorun içeriğin kalitesi, gerçekçiliği ve gerekçelendirmesidir.
+
+## Adım 2: İtiraz Hakkınızı Değerlendirin
+
+KOSGEB süreçlerinde, sonuca **itiraz** edebileceğiniz bir süre tanımlanır. İtiraz, kararın hatalı olduğunu düşündüğünüz somut bir gerekçeniz varsa anlamlıdır (örneğin sistem bir belgenizi görmemişse). İtiraz süresi ve yöntemi başvuru sonucuyla birlikte bildirilir; bu süreyi kaçırmayın.
+
+İtirazın kabulü garanti değildir; bu yüzden çoğu durumda en sağlıklı yol, **eksikleri giderip bir sonraki başvuru döneminde daha güçlü bir dosyayla** tekrar başvurmaktır.
+
+## Adım 3: Eksikleri Giderin
+
+| Red Nedeni | Çözüm |
+|---|---|
+| Vergi / SGK borcu | Borcu kapatın veya yapılandırın; "borcu yoktur" belgesi alın |
+| Pasif KOSGEB kaydı | edevlet.kosgeb.gov.tr üzerinden kaydı aktif hale getirin |
+| Zayıf gerekçelendirme | Her bütçe kalemini "neden gerekli, ne kazandıracak" mantığıyla yeniden yazın |
+| Afaki/abartılı hedefler | Sektör ortalamalarına dayalı, ölçülebilir ve gerçekçi hedefler koyun |
+| NACE-program uyumsuzluğu | Faaliyet kodunuzun programa uygunluğunu doğrulayın |
+
+## Adım 4: Bir Sonraki Döneme Güçlü Hazırlanın
+
+KOSGEB yılda birden fazla başvuru dönemi açar. Reddi bir "geri bildirim" olarak kullanın: jürinin zayıf bulduğu noktaları güçlendirin, somut sayısal verilerle destekleyin ve dosyanızı profesyonel bir kurguyla yeniden hazırlayın. İyi gerekçelendirilmiş, tutarlı ve gerçekçi bir başvuru, ikinci denemede kabul şansını belirgin şekilde artırır.
+
+---
+
+Güncel başvuru dönemleri ve resmi sonuç/itiraz süreçleri için her zaman **kosgeb.gov.tr** ve KOSGEB e-Hizmetler sistemini esas alın. Koşullar KOSGEB kararıyla değişebilir.
+`,
+    faq: [
+      { q: 'KOSGEB başvurusu reddedilince tekrar başvurabilir miyim?', a: 'Evet. Red, kalıcı bir engel değildir. Eksikleri giderip bir sonraki başvuru döneminde yeniden başvurabilirsiniz. KOSGEB yıl içinde birden fazla başvuru dönemi açar.' },
+      { q: 'Red nedenini nereden öğrenirim?', a: 'Değerlendirme gerekçesi KOSGEB e-Hizmetler (edevlet.kosgeb.gov.tr) sistemindeki başvuru kaydınızda yer alır. Ayrıca bağlı olduğunuz KOSGEB İl Müdürlüğü ile görüşerek ayrıntılı bilgi alabilirsiniz.' },
+      { q: 'Red kararına itiraz edebilir miyim?', a: 'Evet, sonuçla birlikte bildirilen süre içinde itiraz hakkınız vardır. İtiraz, kararın hatalı olduğuna dair somut bir gerekçeniz olduğunda anlamlıdır. Aksi halde eksikleri giderip yeniden başvurmak genellikle daha sonuç odaklıdır.' },
+      { q: 'En sık red nedenleri nelerdir?', a: 'Vergi/SGK borcu, pasif KOSGEB kaydı, NACE-program uyumsuzluğu, zayıf veya abartılı gerekçelendirme ve eksik belgeler en sık karşılaşılan red nedenleridir.' },
+    ],
+  },
+
+  'kadin-girisimci-kosgeb-destekleri-2026': {
+    title: 'Kadın Girişimci KOSGEB Destekleri 2026: Avantajlar ve Başvuru',
+    description: 'Kadın girişimciler için KOSGEB destekleri, ek hibe avantajları ve başvuru adımları. 2026 güncel bilgilerle kadın girişimci destek rehberi.',
+    category: 'Program Analizi',
+    readMin: 6,
+    dateStr: 'Haziran 2026',
+    content: `
+## Kadın Girişimciler İçin KOSGEB Avantajı
+
+KOSGEB, girişimciliği yaygınlaştırmak amacıyla **kadın, genç ve engelli girişimcilere** çeşitli programlarda ek avantajlar tanır. Kadın girişimciler için bu avantaj genellikle **daha yüksek destek üst limiti** veya **ek geri ödemesiz destek** şeklinde uygulanır. Yani aynı projeyi sunan iki girişimciden kadın girişimci, belirli kalemlerde daha fazla destekten yararlanabilir.
+
+## Hangi Programlara Başvurulabilir?
+
+Kadın girişimciler, KOSGEB'in tüm ana programlarına başvurabilir; ek avantajlar özellikle **Girişimci Destek Programı** kapsamında öne çıkar:
+
+- **İş Kurma / İş Geliştirme Destekleri:** Yeni kurulan işletmeler için kuruluş, makine-teçhizat, yazılım ve işletme giderlerine yönelik destekler.
+- **KOBİ Gelişim ve sektörel programlar:** Mevcut işletmenizi büyütmek, dijitalleşmek veya ihracata yönelmek için.
+
+Önemli olan, işletmenizin **KOSGEB veri tabanına kayıtlı ve aktif** olması ve faaliyet kodunuzun (NACE) başvurduğunuz programa uygun olmasıdır.
+
+## Başvuru Adımları
+
+1. **KOSGEB kaydı:** edevlet.kosgeb.gov.tr adresine e-Devlet şifrenizle girip KOSGEB Veri Tabanı kaydınızı yapın/aktifleştirin.
+2. **Uygunluk kontrolü:** İşletme yaşı, sektör ve borç durumu açısından programa uygunluğunuzu doğrulayın.
+3. **Eğitim:** Bazı girişimcilik desteklerinde Uygulamalı Girişimcilik Eğitimi sertifikası istenebilir.
+4. **Proje/başvuru dosyası:** İş planı, bütçe ve gerekçelerinizi içeren dosyanızı hazırlayın.
+5. **Başvuru:** KOSGEB e-Hizmetler üzerinden başvurunuzu gönderin.
+
+## Güçlü Başvuru İçin İpuçları
+
+- Kadın girişimci avantajını projenizin **gerçekçiliğiyle** birleştirin; ek limit, zayıf bir projeyi kurtarmaz.
+- İstihdam hedeflerinizde, özellikle kadın istihdamına katkıyı somut sayılarla belirtin.
+- Bütçe kalemlerini sektör gerçeklerine uygun, ölçülebilir gerekçelerle açıklayın.
+
+---
+
+Güncel destek tutarları, oranları ve ek avantajların kapsamı KOSGEB kararıyla değişebilir; başvuru öncesi mutlaka **kosgeb.gov.tr** üzerinden ilgili programın güncel Uygulama Esaslarını kontrol edin.
+`,
+    faq: [
+      { q: 'Kadın girişimcilere KOSGEB ek destek veriyor mu?', a: 'Evet. KOSGEB, kadın (ayrıca genç ve engelli) girişimcilere belirli programlarda daha yüksek üst limit veya ek geri ödemesiz destek şeklinde avantaj tanır. Kapsam ve tutarlar programın güncel Uygulama Esaslarına göre değişir.' },
+      { q: 'Kadın girişimci olarak hangi programa başvurmalıyım?', a: 'Yeni kurduysanız Girişimci Destek Programı, mevcut işletmenizi büyütüyorsanız KOBİ Gelişim ve sektörel programlar uygundur. İşletme yaşınıza ve sektörünüze göre uygunluk testi yaptırmanız önerilir.' },
+      { q: 'Başvuru için hangi şartlar gerekli?', a: 'İşletmenizin KOSGEB veri tabanına kayıtlı ve aktif olması, vergi/SGK borcunuzun bulunmaması ve NACE kodunuzun programa uygun olması temel şartlardır. Bazı desteklerde girişimcilik eğitimi sertifikası istenebilir.' },
+    ],
+  },
 
   'kosgeb-hibe-basvurusu-nasil-yapilir': {
     title: 'KOSGEB Hibe Başvurusu Nasıl Yapılır? (2026 Güncel Rehber)',
@@ -717,32 +815,40 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   if (!post) notFound()
 
   const pageUrl = `https://kosgebhibe.com/blog/${slug}`
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'Article',
-        headline: post!.title,
-        description: post!.description,
-        inLanguage: 'tr-TR',
-        author: { '@type': 'Organization', name: 'kosgebhibe.com', url: 'https://kosgebhibe.com' },
-        publisher: {
-          '@type': 'Organization',
-          name: 'kosgebhibe.com',
-          logo: { '@type': 'ImageObject', url: 'https://kosgebhibe.com/icon.png' },
-        },
-        mainEntityOfPage: pageUrl,
+  const graph: Record<string, unknown>[] = [
+    {
+      '@type': 'Article',
+      headline: post!.title,
+      description: post!.description,
+      inLanguage: 'tr-TR',
+      author: { '@type': 'Organization', name: 'kosgebhibe.com', url: 'https://kosgebhibe.com' },
+      publisher: {
+        '@type': 'Organization',
+        name: 'kosgebhibe.com',
+        logo: { '@type': 'ImageObject', url: 'https://kosgebhibe.com/icon.png' },
       },
-      {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://kosgebhibe.com/' },
-          { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://kosgebhibe.com/blog' },
-          { '@type': 'ListItem', position: 3, name: post!.title, item: pageUrl },
-        ],
-      },
-    ],
+      mainEntityOfPage: pageUrl,
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://kosgebhibe.com/' },
+        { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://kosgebhibe.com/blog' },
+        { '@type': 'ListItem', position: 3, name: post!.title, item: pageUrl },
+      ],
+    },
+  ]
+  if (post!.faq && post!.faq.length > 0) {
+    graph.push({
+      '@type': 'FAQPage',
+      mainEntity: post!.faq.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    })
   }
+  const jsonLd = { '@context': 'https://schema.org', '@graph': graph }
 
   return (
     <>
@@ -774,6 +880,18 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             className={styles.content}
             dangerouslySetInnerHTML={{ __html: renderContent(post!.content) }}
           />
+
+          {post!.faq && post!.faq.length > 0 && (
+            <div className={styles.content} style={{ marginTop: '32px' }}>
+              <h2>Sıkça Sorulan Sorular</h2>
+              {post!.faq.map((f, i) => (
+                <div key={i} style={{ marginBottom: '16px' }}>
+                  <h3>{f.q}</h3>
+                  <p>{f.a}</p>
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className={styles.ctaBox}>
             <div className="card-title">Başvurunuzu Hemen Hazırlayın</div>

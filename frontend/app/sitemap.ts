@@ -29,6 +29,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Yayında olan blog makaleleri (blog/[slug]/page.tsx içindeki CONTENT ile birebir)
   const blogSlugs = [
+    'kosgeb-basvurusu-reddedilirse-ne-yapmali',
+    'kadin-girisimci-kosgeb-destekleri-2026',
     'kosgeb-hibe-basvurusu-nasil-yapilir',
     'kosgeb-2026-destekleri',
     'kosgeb-icin-nace-kodu-nasil-belirlenir',
