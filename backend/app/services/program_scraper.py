@@ -22,7 +22,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import KosgebProgram, ProgramUpdateProposal, ProgramFetchLog
-from app.services.ai_generator import client  # mevcut AsyncGroq istemcisi
+from app.services.ai_generator import llm_complete  # sıralı fallback'lı LLM motoru
 
 # KOSGEB destekler listeleme sayfası (detay linkleri buradan toplanır)
 LISTING_URL = "https://www.kosgeb.gov.tr/site/tr/genel/destekler/3/destekler"
@@ -116,13 +116,10 @@ Metin:
 async def _ai_parse_detail(text: str, fallback_code: str) -> dict | None:
     """Tek bir detay sayfası metnini yapısal program dict'ine çevirir."""
     try:
-        resp = await client.chat.completions.create(
-            messages=[{"role": "user", "content": _DETAIL_PROMPT.format(text=text)}],
-            model="llama-3.3-70b-versatile",
-            temperature=0.1,
-            max_tokens=2000,
-        )
-        out = resp.choices[0].message.content.strip()
+        out = (await llm_complete(
+            [{"role": "user", "content": _DETAIL_PROMPT.format(text=text)}],
+            temperature=0.1, max_tokens=2000, rounds=2,
+        )).strip()
         if out.startswith("```"):
             out = re.sub(r"^```(?:json)?|```$", "", out).strip()
         data = json.loads(out)

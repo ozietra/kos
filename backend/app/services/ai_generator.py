@@ -5,10 +5,13 @@ Kademeli üretim (Chunking) ve %90 Başarı (Self-Correction) filtreli
 import os
 import re
 import asyncio
+import logging
 from datetime import date
 from typing import AsyncGenerator
-from groq import AsyncGroq
+from openai import AsyncOpenAI
 from app.config import settings
+
+logger = logging.getLogger("kosgeb.ai")
 
 # ─── METIN TEMIZLEME (yabanci alfabe temizleyici) ──────────
 # Llama modeli, Turkce yazmasi istense de ara sira farkli alfabelerden karakter
@@ -34,7 +37,42 @@ def _sanitize_tr(text: str) -> str:
     return text
 
 
-client = AsyncGroq(api_key=settings.GROQ_API_KEY)
+# ─── YAPAY ZEKÂ SAĞLAYICILARI (sıralı fallback) ──────────────────────────────
+# Tümü OpenAI-uyumlu API; tümü Llama-3.3-70B sunar. Sırayla denenir: biri limit
+# (429) veya hata verince otomatik bir sonrakine geçilir. Hepsi dolduysa kısa
+# bekleyip baştan dener. .env'e ne kadar çok anahtar koyarsan o kadar kapasite.
+_PROVIDER_DEFS = [
+    ("groq",       "https://api.groq.com/openai/v1", settings.GROQ_API_KEY,        settings.GROQ_MODEL),
+    ("openrouter", "https://openrouter.ai/api/v1",   settings.OPENROUTER_API_KEY,  settings.OPENROUTER_MODEL),
+    ("cerebras",   "https://api.cerebras.ai/v1",     settings.CEREBRAS_API_KEY,    settings.CEREBRAS_MODEL),
+    ("together",   "https://api.together.xyz/v1",    settings.TOGETHER_API_KEY,    settings.TOGETHER_MODEL),
+]
+
+
+def _build_providers() -> list[dict]:
+    provs: list[dict] = []
+    # Birincil + ek Groq anahtarları (aynı/farklı hesaplar) — kapasiteyi katlar
+    groq_keys = [settings.GROQ_API_KEY] + [
+        k.strip() for k in (settings.GROQ_API_KEYS_EXTRA or "").split(",")
+    ]
+    for i, key in enumerate(dict.fromkeys([k for k in groq_keys if k])):  # benzersiz, dolu
+        provs.append({
+            "name": f"groq#{i + 1}",
+            "client": AsyncOpenAI(base_url="https://api.groq.com/openai/v1", api_key=key, timeout=60.0),
+            "model": settings.GROQ_MODEL,
+        })
+    # Diğer sağlayıcılar (yalnızca anahtarı doluysa)
+    for name, base_url, key, model in _PROVIDER_DEFS[1:]:
+        if key:
+            provs.append({
+                "name": name,
+                "client": AsyncOpenAI(base_url=base_url, api_key=key, timeout=60.0),
+                "model": model,
+            })
+    return provs
+
+
+_PROVIDERS = _build_providers()
 
 # ─── SİSTEM PROMPTU (Dinamik tarih) ──────────────────────────────────────────
 
@@ -80,29 +118,55 @@ def _retry_after_seconds(err_str: str, attempt: int) -> float:
     return min(6.0 * (attempt + 1), 30.0)  # 6, 12, 18, 24, 30...
 
 
-async def call_groq(prompt: str, max_retries: int = 5, max_tokens: int = 1800) -> str:
-    """Temel Groq API çağrısı. Hız limitinde Groq'un önerdiği süre kadar (yoksa
-    artan aralıkla) bekleyip yeniden dener — tek bir 429 üretimi düşürmesin."""
-    for attempt in range(max_retries):
-        try:
-            response = await client.chat.completions.create(
-                messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": prompt}
-                ],
-                model="llama-3.3-70b-versatile",
-                temperature=0.6,
-                max_tokens=max_tokens,
-            )
-            return _sanitize_tr(response.choices[0].message.content.strip())
-        except Exception as e:
-            err_str = str(e).lower()
-            if _is_rate_limit(err_str):
-                if attempt < max_retries - 1:
-                    await asyncio.sleep(_retry_after_seconds(err_str, attempt))
-                    continue
-                raise Exception("Analiz sunucularımızda anlık bir yoğunluk yaşanıyor. Lütfen işleminizi 1-2 dakika sonra tekrar deneyiniz.")
-            raise Exception(f"Üretim Hatası: {str(e)}")
+async def llm_complete(
+    messages: list[dict],
+    temperature: float = 0.6,
+    max_tokens: int = 1800,
+    rounds: int = 3,
+) -> str:
+    """Sağlayıcıları SIRAYLA dener. Biri limit/hata verince hemen sonrakine geçer.
+    Bir turda hepsi başarısız olursa (örn. hepsi limitte) kısa bekleyip baştan
+    dener — `rounds` kadar. Ham metni döndürür (temizleme çağırana ait)."""
+    if not _PROVIDERS:
+        raise Exception("Yapay zekâ sağlayıcısı yapılandırılmamış. Lütfen .env içine en az bir GROQ_API_KEY ekleyin.")
+
+    last_err: Exception | None = None
+    for rnd in range(rounds):
+        all_rate_limited = True
+        for prov in _PROVIDERS:
+            try:
+                resp = await prov["client"].chat.completions.create(
+                    messages=messages,
+                    model=prov["model"],
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                )
+                content = (resp.choices[0].message.content or "").strip()
+                if content:
+                    return content
+                all_rate_limited = False  # boş yanıt; limit değil
+            except Exception as e:
+                last_err = e
+                if not _is_rate_limit(str(e).lower()):
+                    all_rate_limited = False
+                logger.warning("LLM sağlayıcı '%s' başarısız (tur %d): %s", prov["name"], rnd + 1, str(e)[:160])
+                continue  # bir sonraki sağlayıcıyı dene
+        # Tüm sağlayıcılar bu turda başarısız oldu
+        if all_rate_limited and rnd < rounds - 1:
+            await asyncio.sleep(_retry_after_seconds(str(last_err or "").lower(), rnd))
+        elif rnd < rounds - 1:
+            await asyncio.sleep(2.0)  # geçici hata; kısa bekle, tekrar dene
+    raise Exception("Analiz sunucularımızda anlık bir yoğunluk yaşanıyor. Lütfen işleminizi 1-2 dakika sonra tekrar deneyiniz.")
+
+
+async def call_groq(prompt: str, max_tokens: int = 1800, rounds: int = 3) -> str:
+    """Sistem promptu + kullanıcı promptu ile üretim yapar; çıktıyı temizler."""
+    content = await llm_complete(
+        [{"role": "system", "content": SYSTEM_PROMPT},
+         {"role": "user", "content": prompt}],
+        temperature=0.6, max_tokens=max_tokens, rounds=rounds,
+    )
+    return _sanitize_tr(content)
 
 
 async def evaluate_and_improve(text: str, context_prompt: str) -> str:
@@ -129,7 +193,7 @@ Eğer puan 90'ın altındaysa, metindeki hataları/eksikleri düzelterek YEPYEN�
     # Bu adım OPSİYONEL kalite kontrolüdür; hız limiti vb. ile başarısız olursa
     # üretimi düşürmek yerine orijinal taslağı koru (kısa, tek-iki deneme).
     try:
-        eval_response = await call_groq(eval_prompt, max_retries=2)
+        eval_response = await call_groq(eval_prompt, rounds=1)
     except Exception:
         return text
     if "<APPROVED>" in eval_response.upper():
@@ -271,13 +335,10 @@ LÜTFEN SADECE VE SADECE JSON FORMATINDA YANIT VER. BAŞKA HİÇBİR AÇIKLAMA V
 }}
 """
     try:
-        response = await client.chat.completions.create(
-            messages=[{"role": "user", "content": prompt}],
-            model="llama-3.3-70b-versatile",
-            temperature=0.1,
-            max_tokens=500,
+        text = await llm_complete(
+            [{"role": "user", "content": prompt}],
+            temperature=0.1, max_tokens=500, rounds=2,
         )
-        text = response.choices[0].message.content.strip()
         import json
         if text.startswith("```json"):
             text = text.replace("```json", "").replace("```", "").strip()

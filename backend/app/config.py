@@ -16,8 +16,18 @@ class Settings(BaseSettings):
     # Redis
     REDIS_URL: str = "redis://localhost:6379"
 
-    # Groq (Gemini yerine)
-    GROQ_API_KEY: str = ""
+    # ── Yapay zekâ sağlayıcıları (sırayla denenir; biri limit/hata verince
+    #    otomatik diğerine geçilir). Hepsi OpenAI-uyumlu; hepsi Llama-3.3-70B sunar.
+    #    İstediğin kadar anahtar ekleyebilirsin — fazlası = daha çok kapasite. ──
+    GROQ_API_KEY: str = ""                       # birincil Groq anahtarı
+    GROQ_API_KEYS_EXTRA: str = ""                # virgülle ayrılmış ek Groq anahtarları
+    GROQ_MODEL: str = "llama-3.3-70b-versatile"
+    OPENROUTER_API_KEY: str = ""
+    OPENROUTER_MODEL: str = "meta-llama/llama-3.3-70b-instruct"
+    CEREBRAS_API_KEY: str = ""
+    CEREBRAS_MODEL: str = "llama-3.3-70b"
+    TOGETHER_API_KEY: str = ""
+    TOGETHER_MODEL: str = "meta-llama/Llama-3.3-70B-Instruct-Turbo"
 
     # iyzico
     IYZICO_API_KEY: str = ""
