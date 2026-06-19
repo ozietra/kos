@@ -4,15 +4,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://kosgebhibe.com'
   const now = new Date()
 
-  const staticPages = [
-    { url: `${baseUrl}/`, changeFrequency: 'weekly' as const, priority: 1.0, lastModified: now },
-    { url: `${baseUrl}/uygunluk-testi`, changeFrequency: 'monthly' as const, priority: 0.9, lastModified: now },
-    { url: `${baseUrl}/nace-kodu-sorgula`, changeFrequency: 'monthly' as const, priority: 0.85, lastModified: now },
-    { url: `${baseUrl}/fiyatlandirma`, changeFrequency: 'monthly' as const, priority: 0.75, lastModified: now },
-    { url: `${baseUrl}/blog`, changeFrequency: 'weekly' as const, priority: 0.8, lastModified: now },
+  // Tanıtım / araç sayfaları (indekslenmeli)
+  const corePages = [
+    { url: `${baseUrl}/`, changeFrequency: 'weekly' as const, priority: 1.0 },
+    { url: `${baseUrl}/uygunluk-testi`, changeFrequency: 'monthly' as const, priority: 0.9 },
+    { url: `${baseUrl}/nace-kodu-sorgula`, changeFrequency: 'monthly' as const, priority: 0.85 },
+    { url: `${baseUrl}/fiyatlandirma`, changeFrequency: 'monthly' as const, priority: 0.75 },
+    { url: `${baseUrl}/demo`, changeFrequency: 'monthly' as const, priority: 0.6 },
+    { url: `${baseUrl}/blog`, changeFrequency: 'weekly' as const, priority: 0.8 },
   ]
 
-  // Blog slugları (Bölüm 11: 52 makale)
+  // Yasal / bilgilendirme sayfaları (düşük öncelik ama indekslensin — güven sinyali)
+  const legalPages = [
+    'kvkk',
+    'gizlilik',
+    'kullanim-kosullari',
+    'kullanim-sartlari',
+    'mesafeli-satis',
+  ].map((p) => ({
+    url: `${baseUrl}/${p}`,
+    changeFrequency: 'yearly' as const,
+    priority: 0.3,
+  }))
+
+  // Yayında olan blog makaleleri (blog/[slug]/page.tsx içindeki CONTENT ile birebir)
   const blogSlugs = [
     'kosgeb-hibe-basvurusu-nasil-yapilir',
     'kosgeb-2026-destekleri',
@@ -22,15 +37,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'kosgeb-basvurularinda-en-cok-yapilan-hatalar',
     'kosgeb-kaydi-nasil-yapilir',
     'kosgeb-hibe-miktarlari-2026',
-    // Diğer 44 makale yayına alındıkça buraya eklenecek
   ]
-
-  const blogPages = blogSlugs.map(slug => ({
+  const blogPages = blogSlugs.map((slug) => ({
     url: `${baseUrl}/blog/${slug}`,
     changeFrequency: 'monthly' as const,
     priority: 0.7,
-    lastModified: now,
   }))
 
-  return [...staticPages, ...blogPages]
+  return [...corePages, ...legalPages, ...blogPages].map((p) => ({ ...p, lastModified: now }))
 }
