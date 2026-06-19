@@ -258,7 +258,9 @@ async def refresh_programs(
 ):
     """KOSGEB sitesinden hemen çek ve öneriler üret (canlıya dokunmaz)."""
     from app.services.program_scraper import run_scrape
-    result = await run_scrape(db, triggered_by=f"admin:{admin.id}")
+    # NOT: triggered_by sütunu VARCHAR(40). "admin:" + tam UUID 42 karakter ederek
+    # sınırı aşıyordu; denetim için UUID'nin ilk 8 hanesi yeterli (toplam 14 karakter).
+    result = await run_scrape(db, triggered_by=f"admin:{str(admin.id)[:8]}")
     return result
 
 
