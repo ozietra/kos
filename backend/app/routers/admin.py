@@ -7,10 +7,14 @@ GET  /api/admin/payments      — ödeme listesi
 PUT  /api/admin/programs/{id} — program güncelleme
 """
 import uuid
+import asyncio
+import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from datetime import datetime, date
+
+logger = logging.getLogger("kosgeb.admin")
 
 from app.database import AsyncSessionLocal
 from app.models import (
@@ -267,17 +271,28 @@ async def reject_proposal(
     return {"message": "Öneri reddedildi.", "id": str(prop.id)}
 
 
+async def _run_scrape_bg(triggered_by: str) -> None:
+    """Taramayı kendi DB oturumuyla arka planda çalıştırır (HTTP isteğini bloklamaz)."""
+    from app.services.program_scraper import run_scrape
+    try:
+        async with AsyncSessionLocal() as db:
+            result = await run_scrape(db, triggered_by=triggered_by)
+        logger.info("Admin taraması bitti: %s", result)
+    except Exception as e:
+        logger.exception("Admin taraması hatası: %s", e)
+
+
 @router.post("/programs/refresh")
 async def refresh_programs(
     admin: User = Depends(require_admin),
-    db: AsyncSession = Depends(get_db),
 ):
-    """KOSGEB sitesinden hemen çek ve öneriler üret (canlıya dokunmaz)."""
-    from app.services.program_scraper import run_scrape
-    # NOT: triggered_by sütunu VARCHAR(40). "admin:" + tam UUID 42 karakter ederek
-    # sınırı aşıyordu; denetim için UUID'nin ilk 8 hanesi yeterli (toplam 14 karakter).
-    result = await run_scrape(db, triggered_by=f"admin:{str(admin.id)[:8]}")
-    return result
+    """KOSGEB sitesinden çekmeyi ARKA PLANDA başlat (15+ detay sayfası gezildiği
+    için işlem 1-2 dakika sürebilir; bu yüzden istek anında yanıt döner, tarama
+    arka planda devam eder). Canlıya dokunmaz — yalnızca öneri üretir."""
+    # NOT: triggered_by sütunu VARCHAR(40); UUID'nin ilk 8 hanesi yeterli.
+    asyncio.create_task(_run_scrape_bg(f"admin:{str(admin.id)[:8]}"))
+    return {"started": True,
+            "message": "Tarama arka planda başlatıldı. 1-2 dakika sürebilir; bitince öneriler listelenir."}
 
 
 # ─── SİTE İÇERİĞİ (hero / istatistikler) ─────────────────────────────────────

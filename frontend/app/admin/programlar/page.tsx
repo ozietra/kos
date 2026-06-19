@@ -61,14 +61,33 @@ export default function AdminProgramsPage() {
 
   const refresh = async () => {
     setBusy(true)
-    setMsg('KOSGEB sitesinden güncel veriler çekiliyor…')
+    setMsg('KOSGEB sitesinden güncel veriler çekiliyor… Bu işlem 1-2 dakika sürebilir, lütfen bekleyin.')
     try {
-      const r = await admin.refreshPrograms()
-      setMsg(`Tarama bitti: ${r.total_proposals} yeni öneri oluştu.`)
-      load()
+      await admin.refreshPrograms()
+      const initial = proposals.length
+      let tries = 0
+      const poll = async () => {
+        tries++
+        try {
+          const list = await admin.proposals('pending')
+          if (list.length !== initial) {
+            setProposals(list)
+            setMsg(`Tarama tamamlandı: onay bekleyen ${list.length} öneri listede.`)
+            loadPrograms()
+            setBusy(false)
+            return
+          }
+        } catch {}
+        if (tries >= 25) {
+          setMsg('Tarama tamamlandı (veya yeni bir değişiklik bulunamadı). Listeyi kontrol edebilirsiniz.')
+          setBusy(false)
+          return
+        }
+        setTimeout(poll, 6000)
+      }
+      setTimeout(poll, 6000)
     } catch (e: any) {
-      setMsg('Tarama hatası: ' + e.message)
-    } finally {
+      setMsg('Tarama başlatılamadı: ' + e.message)
       setBusy(false)
     }
   }
