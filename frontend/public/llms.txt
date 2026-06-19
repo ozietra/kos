@@ -46,7 +46,7 @@ Hizmet: İşletme bilgisi + proje fikri → Uygunluk analizi + Başvuru dosyası
 ## Önemli Bilgiler
 
 - Platform bilgilendirme ve hazırlık amaçlıdır; onay garantisi verilmez.
-- Başvurular e-Devlet (edevlet.gov.tr) üzerinden kullanıcı tarafından gönderilir.
+- Başvurular KOSGEB e-Hizmetler (edevlet.kosgeb.gov.tr, e-Devlet şifresiyle) üzerinden kullanıcı tarafından gönderilir.
 - KVKK uyumlu. Kişisel veriler sınırlı amaçla kullanılır.
 - Güncel program bilgileri için: kosgeb.gov.tr
 

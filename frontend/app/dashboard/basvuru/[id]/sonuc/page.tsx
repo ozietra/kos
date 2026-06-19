@@ -126,9 +126,9 @@ export default function SonucPage() {
           <ol className={styles.nextSteps}>
             <li>PDF'i indirin ve gözden geçirin.</li>
             <li>Belge listesindeki tüm evrakları toplayın.</li>
-            <li>KOSGEB kaydınızın aktif olduğunu doğrulayın (<a href="https://eportal.kosgeb.gov.tr" target="_blank" rel="noopener noreferrer">eportal.kosgeb.gov.tr</a>).</li>
+            <li>KOSGEB kaydınızın aktif olduğunu doğrulayın (<a href="https://edevlet.kosgeb.gov.tr" target="_blank" rel="noopener noreferrer">edevlet.kosgeb.gov.tr</a>).</li>
             <li>Vergi ve SGK borç sorgusunu yapın.</li>
-            <li>e-Devlet'ten (<a href="https://www.edevlet.net" target="_blank" rel="noopener noreferrer">edevlet.net</a>) başvuruyu gönderin.</li>
+            <li>Başvurunuzu KOSGEB e-Hizmetler üzerinden (<a href="https://edevlet.kosgeb.gov.tr" target="_blank" rel="noopener noreferrer">edevlet.kosgeb.gov.tr</a>, e-Devlet şifresiyle giriş) gönderin.</li>
           </ol>
         </div>
 

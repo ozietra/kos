@@ -139,7 +139,7 @@ export default async function HomePage() {
                 <div className="card-title">KOSGEB Kaydınız Aktif Mi?</div>
                 <p className="text-secondary fs-sm">
                   Kayıt olmadan başvuru değerlendirmeye alınmaz.
-                  eportal.kosgeb.gov.tr&apos;den kontrol edin.
+                  edevlet.kosgeb.gov.tr&apos;den kontrol edin.
                 </p>
               </div>
               <div className="card">
