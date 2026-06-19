@@ -109,9 +109,10 @@ export default function AdminProgramsPage() {
           <div key={p.id} style={{ border: '1px solid #e4e3dc', borderRadius: 8, padding: 16, marginBottom: 12 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <strong>{p.proposed_data?.program_name || p.program_code}</strong>
-                <span style={{ marginLeft: 8, fontSize: 12, padding: '2px 8px', borderRadius: 4, background: p.change_type === 'create' ? '#1e8449' : '#d68910', color: '#fff' }}>
-                  {p.change_type === 'create' ? 'YENİ PROGRAM' : 'GÜNCELLEME'}
+                <strong>{p.proposed_data?.program_name || p.current_data?.program_name || p.program_code}</strong>
+                <span style={{ marginLeft: 8, fontSize: 12, padding: '2px 8px', borderRadius: 4, color: '#fff',
+                  background: p.change_type === 'create' ? '#1e8449' : p.change_type === 'deactivate' ? '#c0392b' : '#d68910' }}>
+                  {p.change_type === 'create' ? 'YENİ PROGRAM' : p.change_type === 'deactivate' ? 'KALDIRMA' : 'GÜNCELLEME'}
                 </span>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
@@ -139,8 +140,18 @@ export default function AdminProgramsPage() {
                 </tbody>
               </table>
             )}
+            {p.diff_summary?.note && (
+              <div style={{ marginTop: 12, fontSize: 13, color: '#c0392b', background: '#fdf0ef', padding: 10, borderRadius: 6 }}>
+                {p.diff_summary.note}
+              </div>
+            )}
+            {p.change_type === 'create' && p.proposed_data?.purpose && (
+              <div style={{ marginTop: 12, fontSize: 13, color: '#4a4a44' }}>{p.proposed_data.purpose}</div>
+            )}
             {p.source_url && (
-              <div style={{ marginTop: 8, fontSize: 12, color: '#a8a79f' }}>Kaynak: {p.source_url} · Güven: {p.confidence}</div>
+              <div style={{ marginTop: 8, fontSize: 12, color: '#a8a79f' }}>
+                Kaynak: <a href={p.source_url} target="_blank" rel="noreferrer" style={{ color: '#6b6a62' }}>detay sayfası</a> · Güven: {p.confidence}
+              </div>
             )}
           </div>
         ))
@@ -178,6 +189,34 @@ export default function AdminProgramsPage() {
             style={{ background: '#fff', color: '#c0392b', border: '1px solid #c0392b', borderRadius: 6, padding: '8px 14px', cursor: 'pointer' }}>
             Sil
           </button>
+          {(p.purpose || (p.support_items && p.support_items.length > 0)) && (
+            <details style={{ flexBasis: '100%', marginTop: 8, fontSize: 13, color: '#4a4a44' }}>
+              <summary style={{ cursor: 'pointer', color: '#6b6a62' }}>Çekilen detaylar (amaç, destek unsurları)</summary>
+              {p.purpose && <p style={{ marginTop: 8 }}>{p.purpose}</p>}
+              {p.support_items && p.support_items.length > 0 && (
+                <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse', marginTop: 8 }}>
+                  <thead>
+                    <tr style={{ textAlign: 'left', color: '#6b6a62' }}>
+                      <th style={{ padding: '4px 6px' }}>Destek Unsuru</th>
+                      <th style={{ padding: '4px 6px' }}>Tutar</th>
+                      <th style={{ padding: '4px 6px' }}>Oran</th>
+                      <th style={{ padding: '4px 6px' }}>Süre</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {p.support_items.map((it: any, idx: number) => (
+                      <tr key={idx} style={{ borderTop: '1px solid #eee' }}>
+                        <td style={{ padding: '4px 6px' }}>{it.unsur}</td>
+                        <td style={{ padding: '4px 6px' }}>{it.tutar}</td>
+                        <td style={{ padding: '4px 6px' }}>{it.oran}</td>
+                        <td style={{ padding: '4px 6px' }}>{it.sure}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </details>
+          )}
         </div>
       ))}
     </div>
