@@ -13,6 +13,20 @@ export const metadata: Metadata = {
 // Faz 5'te CMS/MDX ile gerçek makaleler eklenecek
 const POSTS = [
   {
+    slug: 'kosgeb-is-plani-nasil-yazilir',
+    title: 'KOSGEB İş Planı Nasıl Yazılır? (Örnekli Adım Adım Rehber)',
+    excerpt: 'Jürinin onaylayacağı iş planı: bölüm bölüm içerik, bütçe gerekçelendirme ve sık yapılan hatalar — örneklerle.',
+    category: 'Başvuru Rehberi',
+    readMin: 9,
+  },
+  {
+    slug: 'yesil-sanayi-mi-dijital-donusum-mu',
+    title: 'Yeşil Sanayi mi, KOBİ Dijital Dönüşüm mü? Hangi Programa Başvurmalı?',
+    excerpt: 'İki güçlü KOSGEB programının farkları, kimler için uygun ve doğru programa nasıl karar verilir?',
+    category: 'Program Analizi',
+    readMin: 7,
+  },
+  {
     slug: 'kosgeb-basvurusu-reddedilirse-ne-yapmali',
     title: 'KOSGEB Başvurusu Reddedilirse Ne Yapmalı? İtiraz ve Yeniden Başvuru',
     excerpt: 'Başvurunuz reddedildiyse red nedenini öğrenme, itiraz hakkı ve bir sonraki dönem güçlü başvuru için adım adım rehber.',

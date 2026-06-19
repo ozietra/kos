@@ -16,6 +16,114 @@ const CONTENT: Record<string, {
   faq?: { q: string; a: string }[]
 }> = {
 
+  'kosgeb-is-plani-nasil-yazilir': {
+    title: 'KOSGEB İş Planı Nasıl Yazılır? (Örnekli Adım Adım Rehber)',
+    description: 'Jürinin onaylayacağı KOSGEB iş planı nasıl hazırlanır? Bölüm bölüm içerik, bütçe gerekçelendirme ve sık yapılan hatalar — örneklerle.',
+    category: 'Başvuru Rehberi',
+    readMin: 9,
+    dateStr: 'Haziran 2026',
+    content: `
+## İş Planı Neden Bu Kadar Önemli?
+
+KOSGEB başvurusunda jürinin kararını en çok etkileyen belge **iş planıdır**. İyi bir iş planı; fikrinizin gerçekçi, ölçülebilir ve sürdürülebilir olduğunu kanıtlar. Zayıf, afaki veya tutarsız bir iş planı ise güçlü bir fikri bile elettirir. Amaç, "para istiyorum" değil; **"bu yatırım şu sonucu üretecek, şu kadar istihdam ve gelir yaratacak"** mantığını sayısal verilerle ortaya koymaktır.
+
+## İş Planının Temel Bölümleri
+
+### 1. Yönetici Özeti
+İşletmenizi, proje fikrinizi ve talep ettiğiniz desteği birkaç paragrafta özetler. En sona yazın ama en başa koyun.
+
+### 2. İşletme ve Ekip
+Faaliyet alanınız (NACE), kuruluş durumu, ekip ve yetkinlikler. Genç/kadın girişimci gibi avantajlarınızı belirtin.
+
+### 3. Pazar Analizi
+Hedef kitleniz kim, pazar ne kadar büyük, rakipler kimler ve sizin **rekabet avantajınız** ne? Mümkünse sayısal verilerle destekleyin.
+
+### 4. Ürün/Hizmet ve Değer Önerisi
+Müşterinin hangi problemini, nasıl çözüyorsunuz? Somut faydayı (ör. "süreçleri %30 hızlandırır") vurgulayın.
+
+### 5. Finansal Plan ve Bütçe
+En kritik bölüm. Her bütçe kalemini **gerekçesiyle** yazın:
+
+| Bütçe Kalemi | Tutar | Gerekçe (neden gerekli, ne kazandırır) |
+|---|---|---|
+| Donanım | 50.000 ₺ | Üretim/geliştirme kapasitesi için zorunlu ekipman |
+| Yazılım | 50.000 ₺ | Lisanslı geliştirme araçları, verimlilik artışı |
+| Eğitim | 100.000 ₺ | Ekip yetkinliği, kaliteli çıktı |
+
+Toplam talebiniz, kalemlerin toplamıyla **birebir tutarlı** olmalı. Tüm dosyada aynı rakamları kullanın.
+
+### 6. Zaman Planı ve Hedefler
+Aylara/çeyreklere bölünmüş somut kilometre taşları; ilk yıl gelir ve istihdam hedefleri.
+
+## Sık Yapılan Hatalar
+
+- Bölümler arası **çelişen rakamlar** (özette 1 milyon, finansalda 5 milyon gibi)
+- Gerekçesiz, "olsun" diye eklenmiş bütçe kalemleri
+- Abartılı, sektör ortalamasının çok üstünde gelir/istihdam vaatleri
+- Kopyala-yapıştır, kişiselleştirilmemiş genel metinler
+
+## İpucu: Tutarlılık = Güven
+
+Jüri, dosyanın her yerinde aynı işletmeyi, aynı rakamları ve aynı hikâyeyi görmek ister. Tutarlı ve gerçekçi bir dosya, profesyonellik sinyali verir ve onay şansını artırır.
+
+---
+
+Tutarlı, gerekçeli ve jüriye uygun bir iş planını **kosgebhibe.com** ile dakikalar içinde hazırlayabilirsiniz. Güncel program koşulları için kosgeb.gov.tr'yi esas alın.
+`,
+    faq: [
+      { q: 'KOSGEB iş planı kaç sayfa olmalı?', a: 'Kesin bir sayfa zorunluluğu yoktur; önemli olan tüm temel bölümleri (özet, pazar, ürün, finansal plan, zaman planı) net ve tutarlı biçimde içermesidir. Gereksiz dolgu yerine somut, gerekçeli içerik tercih edilir.' },
+      { q: 'Bütçe kalemleri nasıl gerekçelendirilir?', a: 'Her kalem için "neden gerekli, ne işe yarayacak, geri dönüşü ne" sorularını yanıtlayın. Tutarlar sektör gerçeklerine uygun ve toplam talebinizle birebir tutarlı olmalıdır.' },
+      { q: 'İş planında en sık hangi hata yapılır?', a: 'Bölümler arası çelişen rakamlar (örneğin özette ve finansal bölümde farklı gelir/istihdam sayıları) ve gerekçesiz bütçe kalemleri en sık yapılan, en çok eletten hatalardır.' },
+    ],
+  },
+
+  'yesil-sanayi-mi-dijital-donusum-mu': {
+    title: 'Yeşil Sanayi mi, KOBİ Dijital Dönüşüm mü? Hangi KOSGEB Programına Başvurmalı?',
+    description: 'Yeşil Sanayi Destek Programı ile KOBİ Dijital Dönüşüm Destek Programı arasındaki farklar, kimler için uygun ve nasıl karar verilir?',
+    category: 'Program Analizi',
+    readMin: 7,
+    dateStr: 'Haziran 2026',
+    content: `
+## İki Güçlü Program, Farklı Odaklar
+
+KOSGEB'in öne çıkan iki programı, **Yeşil Sanayi Destek Programı** ve **KOBİ Dijital Dönüşüm Destek Programı**, farklı ihtiyaçlara hitap eder. Yanlış programa başvurmak, güçlü bir projeyi bile uygunluk aşamasında eletebilir. Doğru tercih, işletmenizin **önceliğine ve yatırım konusuna** bağlıdır.
+
+## Temel Fark
+
+| Kriter | Yeşil Sanayi | KOBİ Dijital Dönüşüm |
+|---|---|---|
+| Ana odak | Enerji verimliliği, temiz/döngüsel ekonomi, yenilenebilir enerji | Üretim/iş süreçlerinde dijitalleşme, otomasyon, yazılım |
+| Tipik hedef kitle | Sanayi/imalat KOBİ'leri | Dijital olgunluğunu artırmak isteyen KOBİ'ler |
+| Örnek yatırım | Güneş enerjisi, atık azaltma, verimlilik ekipmanı | ERP/MES yazılımı, otomasyon, veri altyapısı |
+
+## Hangi Durumda Hangisi?
+
+- **Enerji maliyetlerinizi düşürmek, atığı azaltmak, yenilenebilir enerjiye geçmek** istiyorsanız → Yeşil Sanayi yönü mantıklıdır.
+- **Üretim/iş süreçlerinizi dijitalleştirmek, otomasyon ve yazılımla verimlilik kazanmak** istiyorsanız → Dijital Dönüşüm yönü uygundur.
+
+İki ihtiyaç da varsa, hangisinin **ölçülebilir geri dönüşü daha net ve projeniz daha olgun** ise ondan başlamak genelde daha akıllıcadır.
+
+## Karar Öncesi Kontrol Listesi
+
+- İşletmenizin NACE kodu ve yaşı, hedef programın uygunluk kriterine uyuyor mu?
+- Yatırım konunuz, programın desteklediği kalemlerle örtüşüyor mu?
+- Beklenen sonucu (enerji tasarrufu %, verimlilik artışı %, vb.) somut sayılarla gösterebiliyor musunuz?
+
+## Sonuç
+
+İki program da yüksek katma değer sağlar; doğru tercih, "hangisi daha çok para veriyor" değil, **"hangisi benim yatırımıma ve önceliğime uyuyor"** sorusunun cevabıdır.
+
+---
+
+Programların güncel üst limitleri, oranları ve başvuru koşulları KOSGEB kararıyla değişebilir; başvuru öncesi **kosgeb.gov.tr** üzerinden ilgili programın güncel Uygulama Esaslarını inceleyin. Hangi programa uygun olduğunuzu görmek için ücretsiz uygunluk testimizi kullanabilirsiniz.
+`,
+    faq: [
+      { q: 'Yeşil Sanayi ve Dijital Dönüşüm programlarına aynı anda başvurabilir miyim?', a: 'Programların kendi uygulama esasları ve uygunluk kuralları vardır; aynı yatırım için iki ayrı programdan mükerrer destek genelde mümkün değildir. Önceliğinize en uygun, projesi en olgun olan programdan başlamak önerilir.' },
+      { q: 'Hangi program daha çok hibe veriyor?', a: 'Üst limitler ve oranlar programa, yatırım konusuna ve güncel Uygulama Esaslarına göre değişir. Karar verirken tutardan çok, yatırımınızın programa uygunluğuna ve geri dönüşünün netliğine bakın.' },
+      { q: 'Hangi programa uygun olduğumu nasıl anlarım?', a: 'İşletmenizin NACE kodu, yaşı, sektörü ve yatırım konusu belirleyicidir. Sitemizdeki ücretsiz uygunluk testi ile hızlıca ön değerlendirme yapabilirsiniz.' },
+    ],
+  },
+
   'kosgeb-basvurusu-reddedilirse-ne-yapmali': {
     title: 'KOSGEB Başvurusu Reddedilirse Ne Yapmalı? İtiraz ve Yeniden Başvuru',
     description: 'KOSGEB başvurunuz reddedildiyse panik yapmayın. Red nedenini öğrenme, itiraz hakkı ve bir sonraki dönem güçlü başvuru için adım adım rehber.',
@@ -199,6 +307,12 @@ KOBİGEL gibi jürili programlarda sözlü sunum aşaması da bulunmaktadır.
 
 **kosgebhibe.com ile başvuru dosyanızı 499 ₺'ye hazırlayın. Jüriye sunmayı unutmayın: güçlü bir proje özeti, desteklenme oranını 3 kat artırıyor.**
     `,
+    faq: [
+      { q: 'KOSGEB başvurusu nereden yapılır?', a: 'Başvurular KOSGEB e-Hizmetler sistemi (edevlet.kosgeb.gov.tr) üzerinden, e-Devlet şifrenizle giriş yapılarak çevrimiçi gönderilir. Önce KOSGEB Veri Tabanı kaydınızın aktif olması gerekir.' },
+      { q: 'KOSGEB başvurusu için hangi belgeler gerekir?', a: 'Genellikle güncel vergi levhası, ticaret sicil gazetesi, KOSGEB veri tabanı kaydı, iş planı ve bütçe tablosu istenir. Program ve işletme türüne göre ek belgeler gerekebilir.' },
+      { q: 'KOSGEB hibesi geri ödenir mi?', a: 'Programa göre değişir. Bazı destekler geri ödemesiz hibe, bazıları faizsiz/düşük faizli geri ödemeli kredi, bazıları ise karma yapıdadır. İlgili programın Uygulama Esaslarını kontrol edin.' },
+      { q: 'Başvuru sonucu ne zaman belli olur?', a: 'Süre programa ve başvuru yoğunluğuna göre değişir; ön eleme ardından jüri/kurul değerlendirmesi yapılır. Sonuç ve gerekçe KOSGEB e-Hizmetler sistemindeki başvuru kaydınıza işlenir.' },
+    ],
   },
 
   'kosgeb-is-gelistirme-destegi-nedir': {
