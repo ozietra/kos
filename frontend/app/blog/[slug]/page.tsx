@@ -716,8 +716,37 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const post = CONTENT[slug]
   if (!post) notFound()
 
+  const pageUrl = `https://kosgebhibe.com/blog/${slug}`
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Article',
+        headline: post!.title,
+        description: post!.description,
+        inLanguage: 'tr-TR',
+        author: { '@type': 'Organization', name: 'kosgebhibe.com', url: 'https://kosgebhibe.com' },
+        publisher: {
+          '@type': 'Organization',
+          name: 'kosgebhibe.com',
+          logo: { '@type': 'ImageObject', url: 'https://kosgebhibe.com/icon.png' },
+        },
+        mainEntityOfPage: pageUrl,
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: 'https://kosgebhibe.com/' },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://kosgebhibe.com/blog' },
+          { '@type': 'ListItem', position: 3, name: post!.title, item: pageUrl },
+        ],
+      },
+    ],
+  }
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Header />
       <article className={styles.article}>
         <div className="container" style={{ maxWidth: '740px' }}>

@@ -50,9 +50,32 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const seo = await getSeo()
   const ga = seo?.ga_id?.trim()
 
+  const orgJsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': 'https://kosgebhibe.com/#org',
+        name: 'kosgebhibe.com',
+        url: 'https://kosgebhibe.com',
+        logo: 'https://kosgebhibe.com/icon.png',
+        description: 'KOSGEB hibe başvurusu hazırlık platformu — uygunluk analizi, başvuru metni ve belge listesi.',
+      },
+      {
+        '@type': 'WebSite',
+        '@id': 'https://kosgebhibe.com/#website',
+        url: 'https://kosgebhibe.com',
+        name: 'kosgebhibe.com',
+        inLanguage: 'tr-TR',
+        publisher: { '@id': 'https://kosgebhibe.com/#org' },
+      },
+    ],
+  }
+
   return (
     <html lang="tr" data-scroll-behavior="smooth">
       <body>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         {children}
 
         {/* Google Analytics (admin panelinden ölçüm kimliği girilince devreye girer) */}
