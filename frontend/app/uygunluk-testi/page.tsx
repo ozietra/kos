@@ -35,7 +35,7 @@ export default function UygunlukTestiPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {[
                 { q: 'Türkiye\'de kayıtlı ve aktif bir işletmeniz var mı?', note: 'Ticaret veya şahıs firması olabilir.' },
-                { q: 'KOSGEB veri tabanına kayıtlı mısınız?', note: 'edevlet.kosgeb.gov.tr\'den kontrol edin. Kayıt yoksa önce kayıt olun.' },
+                { q: 'KOSGEB veri tabanına kayıtlı mısınız?', note: 'kosgeb.gov.tr\'den kontrol edin. Kayıt yoksa önce kayıt olun.' },
                 { q: 'Vergi borcunuz var mı?', note: 'Vadesi geçmiş vergi borcu başvuruyu anında reddettiriyor.' },
                 { q: 'SGK prim borcunuz var mı?', note: 'Yapılandırılmış borcun dahi belirtilmesi gerekebilir.' },
                 { q: 'İşletmeniz kaç yıllık?', note: 'İş Geliştirme Desteği için 3 yıldan genç olmalı. KOBİGEL için koşul yok.' },
